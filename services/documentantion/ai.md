@@ -354,3 +354,4 @@ Les logs sont enregistrés dans `/logs/ai-agent.log` et contiennent :
 Version : 1.1.0
 Date : Avril 2025
 
+---
