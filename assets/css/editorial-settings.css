@@ -1,0 +1,223 @@
+/* Styles pour la page des paramètres éditoriaux */
+
+.editorial-settings-page {
+  max-width: 1200px;
+}
+
+.ai-redactor-settings-description {
+  margin-bottom: 20px;
+}
+
+/* Navigation des onglets */
+.ai-redactor-settings-nav-wrapper {
+  margin: 20px 0;
+  border-bottom: 1px solid #ccc;
+}
+
+.ai-redactor-settings-nav ul {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.ai-redactor-settings-nav li {
+  margin: 0;
+}
+
+.ai-redactor-settings-nav a {
+  display: block;
+  padding: 10px 15px;
+  text-decoration: none;
+  background-color: #f1f1f1;
+  border: 1px solid #ccc;
+  border-bottom: none;
+  margin-right: 5px;
+  border-radius: 5px 5px 0 0;
+  font-weight: 500;
+  color: #444;
+  transition: all 0.3s ease;
+}
+
+.ai-redactor-settings-nav a:hover {
+  background-color: #e0e0e0;
+}
+
+.ai-redactor-settings-nav a.active {
+  background-color: #fff;
+  border-bottom: 1px solid #fff;
+  margin-bottom: -1px;
+  color: #2271b1;
+}
+
+/* Sections du formulaire */
+.ai-redactor-form-section {
+  display: none;
+  padding: 20px;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-top: none;
+  margin-top: -1px;
+}
+
+.ai-redactor-form-section.active {
+  display: block;
+}
+
+.ai-redactor-form-section h3 {
+  margin-top: 0;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+/* Champs du formulaire */
+.ai-redactor-form-field {
+  margin-bottom: 20px;
+}
+
+.ai-redactor-form-field label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 600;
+}
+
+.ai-redactor-form-field input[type="text"],
+.ai-redactor-form-field textarea {
+  width: 100%;
+  max-width: 800px;
+}
+
+.ai-redactor-form-field textarea {
+  min-height: 100px;
+}
+
+.ai-redactor-form-field .description {
+  margin-top: 5px;
+  color: #666;
+  font-style: italic;
+}
+
+/* Échelles de ton */
+.ai-redactor-tone-scales {
+  margin: 20px 0;
+  padding: 15px;
+  background: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  max-width: 800px;
+}
+
+.ai-redactor-tone-scale {
+  margin-bottom: 15px;
+}
+
+.ai-redactor-tone-scale:last-child {
+  margin-bottom: 0;
+}
+
+.ai-redactor-scale-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+  font-size: 12px;
+  color: #666;
+}
+
+.ai-redactor-scale-slider {
+  width: 100%;
+}
+
+.ai-redactor-scale-value {
+  display: inline-block;
+  margin-left: 5px;
+  background: #2271b1;
+  color: #fff;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: normal;
+}
+
+/* Aperçu */
+.ai-redactor-preview-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.ai-redactor-preview-box {
+  flex: 1 1 calc(33.33% - 20px);
+  min-width: 250px;
+  padding: 15px;
+  background: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+}
+
+.ai-redactor-preview-box h4 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.ai-redactor-skeleton-line {
+  height: 12px;
+  background: #e0e0e0;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+.ai-redactor-skeleton-line:nth-child(2) {
+  width: 90%;
+}
+
+.ai-redactor-skeleton-line:nth-child(3) {
+  width: 80%;
+}
+
+.ai-redactor-prompt-preview-container {
+  margin-top: 30px;
+}
+
+.ai-redactor-prompt-preview {
+  display: none;
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 15px;
+  background: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-bottom: 15px;
+}
+
+.ai-redactor-prompt-preview pre {
+  margin: 0;
+  white-space: pre-wrap;
+  font-family: monospace;
+  line-height: 1.5;
+}
+
+/* Bouton de soumission */
+.ai-redactor-form-submit {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
+
+/* Responsive design */
+@media screen and (max-width: 782px) {
+  .ai-redactor-settings-nav ul {
+    flex-wrap: wrap;
+  }
+
+  .ai-redactor-settings-nav a {
+    font-size: 13px;
+    padding: 8px 12px;
+  }
+
+  .ai-redactor-preview-box {
+    flex: 1 1 100%;
+  }
+}

@@ -1,0 +1,24 @@
+/**
+ * Variables CSS communes pour toutes les pages d'administration
+ */
+:root {
+  --primary: #2271b1;
+  --primary-dark: #135e96;
+  --primary-light: #72aee6;
+  --success: #00a32a;
+  --success-light: #edfaef;
+  --warning: #dba617;
+  --warning-light: #fcf9e8;
+  --error: #d63638;
+  --error-light: #fcf0f1;
+  --text-primary: #1d2327;
+  --text-secondary: #50575e;
+  --background-light: #f0f0f1;
+  --background-lighter: #f6f7f7;
+  --border-light: #c3c4c7;
+  --border-ultra-light: #e0e0e0;
+  --hover-color: #f0f0f1;
+  --highlight-color: #f6f7f7;
+  --card-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+  --card-shadow-hover: 0 4px 8px rgba(0, 0, 0, 0.12);
+}

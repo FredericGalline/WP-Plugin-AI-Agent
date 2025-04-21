@@ -26,5 +26,6 @@ if (!defined('WP_PLUGIN_AI_AGENT_VERSION')) {
     define('WP_PLUGIN_AI_AGENT_VERSION', '1.0.0');
 }
 
-// Include the main loader file
-require_once WP_PLUGIN_AI_AGENT_PATH . 'includes/loader.php';
+// Include the AI loader file
+require_once plugin_dir_path(__FILE__) . 'includes/loader.php';
+require_once plugin_dir_path(__FILE__) . 'services/ai/ai-loader.php';

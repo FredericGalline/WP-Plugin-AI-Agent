@@ -1,0 +1,255 @@
+/* Styles pour les onglets des fonctionnalités */
+
+.ai-redactor-features-page {
+  margin: 20px 0;
+}
+
+.ai-redactor-provider-tabs {
+  background: #fff;
+  border: 1px solid #ccd0d4;
+  border-radius: 4px;
+  margin-top: 20px;
+  overflow: hidden;
+}
+
+/* Navigation des onglets */
+.ai-redactor-tabs-nav {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  border-bottom: 1px solid #ccd0d4;
+  background: #f8f9fa;
+}
+
+.ai-redactor-tabs-nav li {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ai-redactor-tabs-nav a {
+  display: flex;
+  align-items: center;
+  padding: 12px 15px;
+  text-decoration: none;
+  color: #555;
+  font-weight: 500;
+  border-right: 1px solid #eee;
+  transition: background 0.2s;
+}
+
+.ai-redactor-tabs-nav a:hover {
+  background-color: #f0f0f1;
+  color: #2271b1;
+}
+
+.ai-redactor-tabs-nav a.active {
+  background-color: #fff;
+  color: #1d2327;
+  border-bottom: 2px solid #2271b1;
+  margin-bottom: -1px;
+}
+
+.ai-redactor-tab-icon {
+  margin-right: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ai-redactor-tab-icon .dashicons {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+.ai-redactor-tab-text {
+  display: flex;
+  align-items: center;
+}
+
+.ai-redactor-tab-badge {
+  background: #2271b1;
+  color: #fff;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 10px;
+  margin-left: 8px;
+  font-weight: normal;
+}
+
+/* Contenu des onglets */
+.ai-redactor-tabs-content {
+  padding: 20px;
+}
+
+.ai-redactor-tab-content {
+  display: none;
+}
+
+.ai-redactor-tab-content.active {
+  display: block;
+}
+
+/* En-tête de l'onglet actif */
+.ai-redactor-tab-content h2 {
+  display: flex;
+  align-items: center;
+  margin-top: 0;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.ai-redactor-provider-icon {
+  margin-right: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.ai-redactor-provider-icon .dashicons {
+  font-size: 24px;
+  width: 24px;
+  height: 24px;
+  color: #2271b1;
+}
+
+.ai-redactor-provider-badge {
+  font-size: 12px;
+  padding: 3px 8px;
+  border-radius: 12px;
+  margin-left: 10px;
+  font-weight: normal;
+  vertical-align: middle;
+}
+
+.ai-redactor-provider-badge.active {
+  background: #00a32a;
+  color: #fff;
+}
+
+.ai-redactor-provider-badge.inactive {
+  background: #dcdcde;
+  color: #50575e;
+}
+
+/* Styles responsifs */
+@media (max-width: 782px) {
+  .ai-redactor-tabs-nav {
+    flex-direction: column;
+  }
+
+  .ai-redactor-tabs-nav a {
+    border-right: none;
+    border-bottom: 1px solid #eee;
+  }
+
+  .ai-redactor-tabs-nav a.active {
+    border-bottom: 1px solid #2271b1;
+  }
+}
+
+/* Styles pour la navigation par onglets des fonctionnalités */
+
+.ai-redactor-features-tabs {
+  margin: 20px 0;
+  border-bottom: 1px solid #ccc;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.ai-redactor-features-tab {
+  padding: 10px 20px;
+  background-color: #f1f1f1;
+  border: 1px solid #ccc;
+  border-bottom: none;
+  margin-right: 5px;
+  border-radius: 5px 5px 0 0;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.ai-redactor-features-tab:hover {
+  background-color: #e0e0e0;
+}
+
+.ai-redactor-features-tab.active {
+  background-color: #fff;
+  border-bottom: 1px solid #fff;
+  margin-bottom: -1px;
+  color: #2271b1;
+}
+
+.ai-redactor-features-content {
+  display: none;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-top: none;
+  background: #fff;
+}
+
+.ai-redactor-features-content.active {
+  display: block;
+}
+
+/* Styles pour les menus déroulants */
+.ai-redactor-form-field select {
+  width: 100%;
+  max-width: 400px;
+  padding: 8px 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #fff;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.07);
+  font-size: 14px;
+  line-height: 1.4;
+  color: #32373c;
+}
+
+.ai-redactor-form-field select:focus {
+  border-color: #2271b1;
+  box-shadow: 0 0 0 1px #2271b1;
+  outline: 2px solid transparent;
+}
+
+/* Mise en évidence des choix prédéfinis */
+.ai-redactor-preset-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.ai-redactor-preset-option {
+  display: inline-block;
+  padding: 6px 12px;
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.ai-redactor-preset-option:hover {
+  background-color: #e0e7ef;
+  border-color: #bbb;
+}
+
+.ai-redactor-preset-option.selected {
+  background-color: #e7f5ff;
+  border-color: #2271b1;
+  color: #2271b1;
+}
+
+/* Responsive design */
+@media screen and (max-width: 782px) {
+  .ai-redactor-features-tab {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+
+  .ai-redactor-form-field select {
+    max-width: 100%;
+  }
+}

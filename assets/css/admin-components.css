@@ -1,0 +1,206 @@
+/**
+ * Styles pour les composants d'interface communs
+ * Utilisables dans toutes les pages d'administration du plugin
+ */
+
+/* Système d'onglets */
+.ai-redactor-provider-tabs {
+  background: #fff;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid var(--border-ultra-light);
+  box-shadow: var(--card-shadow);
+}
+
+.ai-redactor-tabs-nav {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  background-color: var(--background-lighter);
+  border-bottom: 1px solid var(--border-ultra-light);
+}
+
+.ai-redactor-tabs-nav li {
+  margin: 0;
+}
+
+.ai-redactor-tabs-nav li a {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border-bottom: 3px solid transparent;
+}
+
+.ai-redactor-tabs-nav li a:hover {
+  background-color: rgba(0, 0, 0, 0.02);
+  color: var(--primary);
+}
+
+.ai-redactor-tabs-nav li.active a {
+  background-color: #fff;
+  color: var(--primary);
+  border-bottom: 3px solid var(--primary);
+}
+
+.ai-redactor-tabs-nav li a .dashicons {
+  margin-right: 8px;
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+.ai-redactor-tab {
+  display: none;
+}
+
+.ai-redactor-tab.active {
+  display: block;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Structure des sections */
+.ai-redactor-section {
+  margin-bottom: 30px;
+}
+
+.ai-redactor-section-title {
+  display: flex;
+  align-items: center;
+  font-size: 18px;
+  margin-top: 0;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-ultra-light);
+  color: var(--text-primary);
+}
+
+.ai-redactor-section-title .dashicons {
+  margin-right: 8px;
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+/* Accordéon */
+.ai-redactor-accordion {
+  border: 1px solid var(--border-ultra-light);
+  border-radius: 6px;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+.ai-redactor-accordion-item {
+  background-color: #fff;
+  overflow: hidden;
+}
+
+.ai-redactor-accordion-item:not(:last-child) {
+  border-bottom: 1px solid var(--border-ultra-light);
+}
+
+.ai-redactor-accordion-header {
+  padding: 12px 15px;
+  background-color: var(--background-lighter);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: background-color 0.2s ease;
+}
+
+.ai-redactor-accordion-header:hover {
+  background-color: var(--hover-color);
+}
+
+.ai-redactor-accordion-header h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ai-redactor-accordion-toggle {
+  font-size: 20px;
+  transition: transform 0.2s ease;
+}
+
+.ai-redactor-accordion-item.open .ai-redactor-accordion-header {
+  background-color: #fff;
+  border-bottom: 1px solid var(--border-ultra-light);
+}
+
+.ai-redactor-accordion-content {
+  padding: 15px;
+  display: none;
+}
+
+/* Styles pour les fournisseurs avec status */
+.ai-redactor-accordion-item.configured {
+  border-left: 3px solid var(--success);
+}
+
+.ai-redactor-accordion-item.not-configured {
+  border-left: 3px solid var(--warning);
+}
+
+.ai-redactor-accordion-item.premium-provider {
+  background-color: #fcfcf7;
+}
+
+/* Statut et badges */
+.ai-redactor-status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.ai-redactor-status-badge.success {
+  background-color: var(--success-light);
+  color: var(--success);
+}
+
+.ai-redactor-status-badge.error {
+  background-color: var(--error-light);
+  color: var(--error);
+}
+
+.ai-redactor-status-badge .dashicons {
+  font-size: 14px;
+  width: 14px;
+  height: 14px;
+  margin-right: 4px;
+}
+
+/* Grille de formulaires */
+.ai-redactor-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+/* Media Queries */
+@media screen and (max-width: 782px) {
+  .ai-redactor-tabs-nav {
+    flex-direction: column;
+  }
+
+  .ai-redactor-tabs-nav li a {
+    justify-content: flex-start;
+  }
+
+  .ai-redactor-form-grid {
+    grid-template-columns: 1fr;
+  }
+}
