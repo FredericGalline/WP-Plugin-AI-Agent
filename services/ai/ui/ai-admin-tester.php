@@ -473,20 +473,21 @@ class AI_Redactor_Admin_Tester
                         </label>
                         <textarea name="test_prompt" id="test_prompt" rows="6" class="large-text"
                             placeholder="<?php echo esc_attr__('Exemple: Résume l\'histoire de France en 100 mots', 'ai-redactor'); ?>"><?php echo esc_textarea($prompt); ?></textarea>
+
+
+                        <p class="submit">
+                            <input type="submit" name="ai_redactor_test_prompt_submit" id="ai-redactor-test-submit" class="button button-primary"
+                                value="<?php echo esc_attr__('Tester ce prompt', 'ai-redactor'); ?>">
+                            <span id="ai-redactor-loading" class="ai-redactor-loading" style="display: none;">
+                                <span class="spinner is-active"></span>
+                                <span class="ai-redactor-loading-text"><?php echo esc_html__('Traitement en cours... Veuillez patienter pendant que l\'IA génère une réponse.', 'ai-redactor'); ?></span>
+                            </span>
+
+                            <?php if (!$active_model_info['has_model'] || !$active_model_info['has_api_key']): ?>
+                        <p class="ai-redactor-warning">
+                            <?php echo esc_html__('Vous devez configurer un modèle et une clé API avant de pouvoir tester un prompt.', 'ai-redactor'); ?>
+                        </p>
                     </div>
-
-                    <p class="submit">
-                        <input type="submit" name="ai_redactor_test_prompt_submit" id="ai-redactor-test-submit" class="button button-primary"
-                            value="<?php echo esc_attr__('Tester ce prompt', 'ai-redactor'); ?>">
-                        <span id="ai-redactor-loading" class="ai-redactor-loading" style="display: none;">
-                            <span class="spinner is-active"></span>
-                            <span class="ai-redactor-loading-text"><?php echo esc_html__('Traitement en cours... Veuillez patienter pendant que l\'IA génère une réponse.', 'ai-redactor'); ?></span>
-                        </span>
-
-                        <?php if (!$active_model_info['has_model'] || !$active_model_info['has_api_key']): ?>
-                    <p class="ai-redactor-warning">
-                        <?php echo esc_html__('Vous devez configurer un modèle et une clé API avant de pouvoir tester un prompt.', 'ai-redactor'); ?>
-                    </p>
                 <?php endif; ?>
                 </p>
                 </form>
