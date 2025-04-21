@@ -84,6 +84,16 @@ if (!function_exists('ai_agent_log')) {
 // Un premier test pour vérifier que la journalisation fonctionne
 ai_agent_log('Plugin AI Agent initialisé', 'info');
 
+/**
+ * Récupère l'état du mode débogage pour le plugin
+ *
+ * @return boolean True si le mode débogage est activé, false sinon
+ */
+function ai_agent_get_debug_mode()
+{
+    return defined('AI_AGENT_DEBUG') && AI_AGENT_DEBUG === true;
+}
+
 // Include the AI loader file
 require_once plugin_dir_path(__FILE__) . 'includes/loader.php';
 require_once plugin_dir_path(__FILE__) . 'services/ai/ai-loader.php';

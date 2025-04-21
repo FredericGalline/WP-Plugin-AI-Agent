@@ -654,15 +654,8 @@ class AI_Redactor_Admin_Diagnostic
 
                             // Création du texte pour l'export
                             $export_text  = "=== RAPPORT DE DIAGNOSTIC API IA ===\n";
-                            $export_text .= "Date du test: " . date('Y-m-d H:i:s') . "\n\n";
+                            $export_text .= "Date du test: " . current_time('Y-m-d H:i:s') . "\n\n";
                             $export_text .= "== RÉSUMÉ ==\n";
-                            $export_text .= "Total des modèles testés: " . $total_tests . "\n";
-                            $export_text .= "APIs configurées: " . $configured_apis . " / " . $total_tests . "\n";
-                            $export_text .= "Tests réussis: " . $successful_tests . " / " . $configured_apis . "\n";
-                            $export_text .= "Tests échoués: " . $failed_tests . "\n";
-                            $export_text .= "Temps de réponse moyen: " . $avg_response_time . " ms\n";
-                            $export_text .= "Fournisseurs testés: " . implode(', ', $providers_tested) . "\n\n";
-                            $export_text .= "== RÉSULTATS DÉTAILLÉS ==\n";
 
                             foreach ($exportable_results as $index => $result) {
                                 $export_text .= "\n[Test #" . ($index + 1) . "]\n";
@@ -677,7 +670,7 @@ class AI_Redactor_Admin_Diagnostic
                             // Création des données JSON pour l'export
                             $export_json = json_encode([
                                 'meta' => [
-                                    'date' => date('Y-m-d H:i:s'),
+                                    'date' => current_time('Y-m-d H:i:s'),
                                     'summary' => [
                                         'total_models' => $total_tests,
                                         'configured_apis' => $configured_apis,

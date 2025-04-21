@@ -14,6 +14,10 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+/**
+ * @psalm-suppress UndefinedClass
+ */
+
 class AI_Agent_Logger
 {
     /**
