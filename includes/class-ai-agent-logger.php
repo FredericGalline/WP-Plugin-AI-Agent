@@ -145,10 +145,10 @@ class AI_Agent_Logger
     private function log($level, $message, $context = [])
     {
         // Préparer le message avec la date et le niveau
-        $date_time = new \DateTime();
+        $date_time = current_time('Y-m-d H:i:s');
         $log_message = sprintf(
             "[%s] [%s] %s",
-            $date_time->format('Y-m-d H:i:s'),
+            $date_time,
             $level,
             $message
         );
