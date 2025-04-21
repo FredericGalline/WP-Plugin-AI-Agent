@@ -42,9 +42,9 @@ class AI_Agent_Logger
      * 
      * @param string $log_file Chemin vers le fichier de log
      * @param bool $enabled Si la journalisation est activée
-     * @param int $level Niveau de journalisation
+     * @param int $level Niveau de journalisation (1=Erreur, 2=Avertissement, 3=Info, 4=Débogage)
      */
-    public function __construct($log_file = null, $enabled = true, $level = 4)
+    public function __construct($log_file = null, $enabled = true, $level = 3)
     {
         // Si aucun fichier de log n'est spécifié, utiliser le fichier par défaut
         if (is_null($log_file)) {

@@ -38,11 +38,16 @@ class AI_Request_Handler
      */
     public static function send_prompt($prompt)
     {
+        // Journaliser le début de la requête
+        ai_agent_log('*** DÉBUT DE LA REQUÊTE ***', 'info');
+        ai_agent_log('Prompt reçu pour traitement - Longueur: ' . strlen($prompt) . ' caractères', 'debug');
+
         // Récupérer la configuration des fournisseurs disponibles
         $providers_config = require dirname(dirname(__FILE__)) . '/providers-config.php';
 
         // Récupérer le fournisseur et le modèle actifs (nouveau format: provider:model)
         $active_model_combined = get_option('ai_agent_active_model', '');
+        ai_agent_log('Modèle actif configuré: ' . $active_model_combined, 'info');
 
         $active_provider = '';
         $active_model = '';

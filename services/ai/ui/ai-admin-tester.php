@@ -100,6 +100,14 @@ class AI_Redactor_Admin_Tester
 
         // Traitement du formulaire de test s'il est soumis
         if (isset($_POST['ai_redactor_test_prompt_submit']) && isset($_POST['test_prompt'])) {
+            ai_agent_log('Formulaire de test soumis - Validation du nonce', 'info');
+
+            if (!isset($_POST['ai_redactor_test_prompt_nonce']) || !wp_verify_nonce($_POST['ai_redactor_test_prompt_nonce'], 'ai_redactor_test_prompt')) {
+                ai_agent_log('Échec de la validation du nonce - Erreur de sécurité', 'error');
+                wp_die('Erreur de sécurité. Veuillez réessayer.');
+            }
+
+            ai_agent_log('Nonce validé avec succès', 'info');
             check_admin_referer('ai_redactor_test_prompt', 'ai_redactor_test_prompt_nonce');
 
             $prompt = sanitize_textarea_field($_POST['test_prompt']);
@@ -108,45 +116,111 @@ class AI_Redactor_Admin_Tester
                 // Inclure le gestionnaire de requêtes
                 require_once dirname(dirname(__FILE__)) . '/core/ai-request-handler.php';
 
+                ai_agent_log('========== DÉBUT TRAITEMENT TEST PROMPT ==========', 'info');
+                ai_agent_log('Prompt soumis: ' . substr($prompt, 0, 50) . '... (' . strlen($prompt) . ' caractères)', 'info');
+
                 // Mesurer le temps de réponse si le mode debug est activé
                 if (defined('AI_AGENT_DEBUG') && AI_AGENT_DEBUG) {
                     $start_time = microtime(true);
+                    ai_agent_log('Démarrage du chronomètre pour mesurer le temps de réponse', 'debug');
                 }
 
                 // Définir une limite de temps d'exécution plus longue pour les modèles qui peuvent être lents
                 $original_time_limit = ini_get('max_execution_time');
                 set_time_limit(180); // 3 minutes pour donner plus de temps aux modèles lents
+                ai_agent_log('Limite de temps d\'exécution augmentée à 180 secondes (était: ' . $original_time_limit . ')', 'debug');
 
                 try {
-                    // Envoyer le prompt à l'IA
-                    ai_agent_log('Envoi du prompt au testeur IA : ' . substr($prompt, 0, 100) . '...', 'info');
+                    // Récupérer les informations sur le modèle actif
+                    ai_agent_log('Récupération des informations sur le modèle actif', 'info');
+                    $active_model_info = $this->get_active_model_info();
+                    ai_agent_log('Modèle actif: ' . ($active_model_info['has_model'] ? $active_model_info['provider_name'] . ' / ' . $active_model_info['model_name'] : 'Non configuré'), 'info');
+
+                    // Vérifier que le modèle et la clé API sont configurés avant d'envoyer
+                    if (!$active_model_info['has_model']) {
+                        ai_agent_log('ERREUR: Aucun modèle n\'est configuré', 'error');
+                        throw new Exception('Aucun modèle n\'est configuré. Veuillez configurer un modèle dans Connecteurs IA.');
+                    }
+
+                    if (!$active_model_info['has_api_key']) {
+                        ai_agent_log('ERREUR: Aucune clé API n\'est configurée pour ' . $active_model_info['provider_name'], 'error');
+                        throw new Exception('Aucune clé API n\'est configurée pour ' . $active_model_info['provider_name'] . '. Veuillez configurer une clé dans Connecteurs IA.');
+                    }
+
+                    ai_agent_log('Configuration validée, préparation de l\'envoi du prompt à AI_Request_Handler', 'info');
+
+                    // Envoyer la requête via le gestionnaire central
+                    ai_agent_log('Envoi du prompt à AI_Request_Handler::send_prompt()', 'info');
                     $result = AI_Request_Handler::send_prompt($prompt);
-                    ai_agent_log('Réponse reçue du testeur IA', 'info');
+
+                    ai_agent_log('Réponse reçue de AI_Request_Handler', 'info');
+                    ai_agent_log('Statut de la réponse: ' . ($result['success'] ? 'Succès' : 'Échec'), 'info');
+
+                    if (isset($result['response'])) {
+                        ai_agent_log('Longueur de la réponse: ' . strlen($result['response']) . ' caractères', 'debug');
+                        ai_agent_log('Extrait de la réponse: ' . substr($result['response'], 0, 100) . '...', 'debug');
+                    }
+
+                    if (isset($result['error']) && !empty($result['error'])) {
+                        ai_agent_log('Message d\'erreur: ' . $result['error'], 'error');
+                    }
+
+                    // Vérifier le résultat de la requête
+                    if (!isset($result) || !is_array($result)) {
+                        ai_agent_log('ERREUR: Format de réponse invalide retourné par AI_Request_Handler', 'error');
+                        throw new Exception('Format de réponse invalide. La requête a échoué de manière inattendue.');
+                    }
+
+                    // Traiter la réponse
+                    if ($result['success']) {
+                        ai_agent_log('Traitement de la réponse réussie', 'info');
+                        // Afficher un message de succès
+                        add_settings_error(
+                            'ai_agent_tester',
+                            'response_received',
+                            __('Prompt traité avec succès!', 'ai-agent'),
+                            'success'
+                        );
+                    } else {
+                        // Si le résultat n'est pas un succès mais qu'il y a un message d'erreur
+                        if (isset($result['error']) && !empty($result['error'])) {
+                            ai_agent_log('ERREUR retournée: ' . $result['error'], 'error');
+                            throw new Exception($result['error']);
+                        } else {
+                            ai_agent_log('ERREUR: Aucun message d\'erreur spécifique retourné', 'error');
+                            throw new Exception('Erreur inconnue lors du traitement du prompt.');
+                        }
+                    }
 
                     // Calculer le temps de réponse
                     if (defined('AI_AGENT_DEBUG') && AI_AGENT_DEBUG) {
                         $response_time = microtime(true) - $start_time;
-                        ai_agent_log('Temps de réponse : ' . $response_time . ' secondes', 'debug');
+                        ai_agent_log('Temps de réponse total: ' . $response_time . ' secondes', 'debug');
                     }
                 } catch (Exception $e) {
                     // Capturer toute exception non gérée
+                    ai_agent_log('EXCEPTION: ' . $e->getMessage(), 'error');
+                    if (defined('AI_AGENT_DEBUG') && AI_AGENT_DEBUG) {
+                        ai_agent_log('Trace de l\'exception: ' . $e->getTraceAsString(), 'debug');
+                    }
+
                     $result = [
                         'success' => false,
                         'response' => null,
                         'error' => 'Exception: ' . $e->getMessage()
                     ];
-
-                    ai_agent_log('Exception lors du test de prompt : ' . $e->getMessage(), 'error');
                 }
 
-                // Restaurer la limite de temps d'origine
+                ai_agent_log('Restauration de la limite de temps d\'exécution à ' . $original_time_limit . ' secondes', 'debug');
                 set_time_limit($original_time_limit);
 
                 // Activer automatiquement le diagnostic en cas d'erreur
                 if (isset($result) && !$result['success']) {
+                    ai_agent_log('Activation du diagnostic suite à une erreur', 'info');
                     $show_diagnostic = true;
                 } else if (!isset($result)) {
                     // Si pour une raison quelconque $result n'est pas défini, créer un résultat d'erreur
+                    ai_agent_log('ERREUR: Variable $result non définie après traitement', 'error');
                     $result = [
                         'success' => false,
                         'response' => null,
@@ -154,6 +228,8 @@ class AI_Redactor_Admin_Tester
                     ];
                     $show_diagnostic = true;
                 }
+
+                ai_agent_log('========== FIN TRAITEMENT TEST PROMPT ==========', 'info');
             }
         }
 
@@ -168,7 +244,7 @@ class AI_Redactor_Admin_Tester
         <div class="wrap ai-redactor-wrap ai-redactor-admin">
             <h1><?php echo esc_html__('Testeur de Prompt IA', 'ai-redactor'); ?></h1>
 
-            <?php settings_errors('ai_redactor_tester'); ?>
+            <?php settings_errors('ai_agent_tester'); ?>
 
             <p class="description">
                 <?php echo esc_html__('Utilisez cette page pour tester rapidement des prompts avec le modèle d\'IA actuellement configuré.', 'ai-redactor'); ?>
@@ -404,7 +480,7 @@ class AI_Redactor_Admin_Tester
                             value="<?php echo esc_attr__('Tester ce prompt', 'ai-redactor'); ?>">
                         <span id="ai-redactor-loading" class="ai-redactor-loading" style="display: none;">
                             <span class="spinner is-active"></span>
-                            <span class="ai-redactor-loading-text"><?php echo esc_html__('Envoi de la requête...', 'ai-redactor'); ?></span>
+                            <span class="ai-redactor-loading-text"><?php echo esc_html__('Traitement en cours... Veuillez patienter pendant que l\'IA génère une réponse.', 'ai-redactor'); ?></span>
                         </span>
 
                         <?php if (!$active_model_info['has_model'] || !$active_model_info['has_api_key']): ?>
@@ -501,7 +577,11 @@ class AI_Redactor_Admin_Tester
         <script type="text/javascript">
             jQuery(document).ready(function($) {
                 // Afficher l'indicateur de chargement lors de la soumission du formulaire
-                $('#ai-redactor-test-form').on('submit', function() {
+                $('#ai-redactor-test-form').on('submit', function(e) {
+                    // Ajouter un log pour voir si l'événement est bien capturé
+                    console.log('Formulaire soumis - Début du traitement');
+                    ai_agent_log('Formulaire soumis via JavaScript', 'info');
+
                     if ($('#test_prompt').val().trim() !== '') {
                         $('#ai-redactor-test-submit').attr('disabled', 'disabled');
                         $('#ai-redactor-loading').show();
@@ -510,8 +590,51 @@ class AI_Redactor_Admin_Tester
                         $('html, body').animate({
                             scrollTop: $('#ai-redactor-loading').offset().top - 100
                         }, 500);
+
+                        // S'assurer que le formulaire est bien soumis
+                        console.log('Soumission du formulaire en cours avec prompt:', $('#test_prompt').val().trim().substring(0, 50) + '...');
+
+                        // Ajouter une validation pour s'assurer que le spinner ne tourne pas indéfiniment
+                        setTimeout(function() {
+                            if ($('#ai-redactor-loading').is(':visible')) {
+                                $('#ai-redactor-loading').hide();
+                                $('#ai-redactor-test-submit').removeAttr('disabled');
+                                console.log('Timeout atteint - Arrêt du spinner');
+                            }
+                        }, 30000); // 30 secondes de timeout comme sécurité
+
+                        // Laisser le formulaire se soumettre normalement
+                        return true;
+                    } else {
+                        // Empêcher la soumission si le prompt est vide
+                        e.preventDefault();
+                        alert('Veuillez saisir un prompt avant de soumettre.');
+                        return false;
                     }
                 });
+
+                // Si la page est rechargée avec un résultat, masquer le spinner
+                if ($('.ai-redactor-test-response').length > 0) {
+                    $('#ai-redactor-loading').hide();
+                    $('#ai-redactor-test-submit').removeAttr('disabled');
+                    console.log('Résultat détecté - Spinner masqué');
+                }
+
+                // Ajouter un gestionnaire de clic direct sur le bouton pour s'assurer qu'il fonctionne
+                $('#ai-redactor-test-submit').on('click', function(e) {
+                    console.log('Clic direct sur le bouton de soumission');
+                    var formIsValid = $('#test_prompt').val().trim() !== '';
+
+                    if (formIsValid) {
+                        console.log('Tentative de soumission manuelle du formulaire');
+                        // Ne pas appeler submit() ici car cela pourrait créer une boucle avec l'événement on('submit')
+                    } else {
+                        e.preventDefault();
+                        alert('Veuillez saisir un prompt avant de soumettre.');
+                    }
+                });
+
+                console.log('Gestionnaires d\'événements du formulaire de test initialisés');
             });
         </script>
 <?php
