@@ -43,8 +43,8 @@ class AI_Grok_API
 {
     public static function send_request($prompt, $model, $api_key)
     {
-        if (defined('AI_REDACTOR_DEBUG') && AI_REDACTOR_DEBUG) {
-            error_log("[AI Redactor] Envoi d'une requête à Grok (xAI). Modèle : $model");
+        if (defined('AI_AGENT_DEBUG') && AI_AGENT_DEBUG) {
+            ai_agent_log('Configuration de la requête Grok - Modèle: ' . $model, 'debug');
         }
 
         $api_url = 'https://api.x.ai/v1/chat/completions';

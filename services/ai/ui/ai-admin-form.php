@@ -7,25 +7,16 @@
  * de configurer les connecteurs IA (fournisseurs, clés API, modèles actifs). Il affiche
  * les champs nécessaires et gère leur affichage dynamique en fonction des fournisseurs disponibles.
  *
- * @package AI_Redactor
+ * @package WP_Plugin_AI_Agent
  * @subpackage Services\AI\UI
  *
  * @depends WordPress Options API
  * @depends wp_nonce_field
  * @depends current_user_can
  *
- * @css /assets/css/admin-form.css
- * @css /assets/css/admin-connectors.css
+ * @css /assets/css/ai-admin-form.css
  *
- * @js /assets/js/admin-form.js
- * @js /assets/js/admin-connectors.js
- *
- * @ai Ce fichier est exclusivement dédié à l'affichage du formulaire d'administration pour configurer
- * les connecteurs IA. Il ne contient aucune logique métier liée à la génération de contenu par IA, ni
- * d'algorithmes d'IA. Sa responsabilité est strictement limitée à : (1) afficher les champs de configuration
- * des connecteurs, (2) permettre la sélection des modèles actifs, et (3) fournir des outils d'interaction
- * utilisateur comme les tests de connexion. Toute logique de traitement ou de validation des données est
- * déléguée à d'autres classes.
+ * @js /assets/js/ai-admin.js
  */
 
 // Empêcher l'accès direct au fichier
@@ -36,7 +27,7 @@ if (!defined('ABSPATH')) {
 /**
  * Classe pour le rendu du formulaire d'administration des connecteurs IA
  */
-class AI_Redactor_Admin_Form
+class AI_Agent_Admin_Form
 {
 
     /**
@@ -67,14 +58,57 @@ class AI_Redactor_Admin_Form
             'gemini:gemini-pro'
         ];
 
-?>
-        <form method="post" action="">
-            <?php wp_nonce_field('ai_redactor_save_connectors', 'ai_redactor_connector_nonce'); ?>
+        // Enqueue des styles CSS
+        wp_enqueue_style(
+            'ai-agent-admin-form',
+            WP_PLUGIN_AI_AGENT_URL . 'assets/css/ai-admin-form.css',
+            array(),
+            WP_PLUGIN_AI_AGENT_VERSION
+        );
 
-            <div class="ai-redactor-provider-tabs ai-redactor-vertical-tabs">
-                <!-- En-têtes des onglets (maintenant à gauche) -->
-                <div class="ai-redactor-tabs-sidebar">
-                    <ul class="ai-redactor-tabs-nav">
+        // Ajout de jQuery en dépendance explicite
+        wp_enqueue_script('jquery');
+
+        // Ajout de script inline pour activer les onglets
+        add_action('admin_footer', function () {
+?>
+            <script type="text/javascript">
+                jQuery(document).ready(function($) {
+                    console.log("AI Agent Tabs Ready - Inline version");
+
+                    // Gestion du clic sur les onglets
+                    $(".ai-agent-tabs-nav a").on("click", function(e) {
+                        e.preventDefault();
+
+                        // Récupérer l'ID cible
+                        var target = $(this).attr("href");
+                        console.log("Tab Clicked: " + target);
+
+                        // Supprimer la classe active de tous les onglets et contenus
+                        $(".ai-agent-tabs-nav a").removeClass("active");
+                        $(".ai-agent-tab-content").removeClass("active");
+
+                        // Ajouter la classe active à l'onglet cliqué et au contenu correspondant
+                        $(this).addClass("active");
+                        $(target).addClass("active");
+                    });
+
+                    // Log pour vérifier le nombre d'onglets
+                    console.log("Tabs found: " + $(".ai-agent-tabs-nav a").length);
+                    console.log("Content panels found: " + $(".ai-agent-tab-content").length);
+                });
+            </script>
+        <?php
+        });
+
+        ?>
+        <form method="post" action="">
+            <?php wp_nonce_field('ai_agent_save_connectors', 'ai_agent_connector_nonce'); ?>
+
+            <div class="ai-agent-vertical-tabs">
+                <!-- En-têtes des onglets (sidebar à gauche) -->
+                <div class="ai-agent-tabs-sidebar">
+                    <ul class="ai-agent-tabs-nav">
                         <?php foreach ($providers_config as $provider_id => $provider_data) :
                             $is_provider_active = ($provider_id === $active_provider);
 
@@ -85,15 +119,15 @@ class AI_Redactor_Admin_Form
                             <li>
                                 <a href="#provider-<?php echo esc_attr($provider_id); ?>"
                                     class="<?php echo $is_provider_active ? 'active' : ''; ?>">
-                                    <span class="ai-redactor-tab-icon">
+                                    <span class="ai-agent-tab-icon">
                                         <img src="<?php echo esc_url($svg_path); ?>"
                                             alt="<?php echo esc_attr($provider_data['name']); ?>"
-                                            class="ai-redactor-provider-svg">
+                                            class="ai-agent-provider-svg">
                                     </span>
-                                    <span class="ai-redactor-tab-text">
+                                    <span class="ai-agent-tab-text">
                                         <?php echo esc_html($provider_data['name']); ?>
                                         <?php if ($is_provider_active) : ?>
-                                            <span class="ai-redactor-tab-badge"><?php echo esc_html__('Actif', 'ai-redactor'); ?></span>
+                                            <span class="ai-agent-tab-badge"><?php echo esc_html__('Actif', 'wp-plugin-ai-agent'); ?></span>
                                         <?php endif; ?>
                                     </span>
                                 </a>
@@ -102,9 +136,9 @@ class AI_Redactor_Admin_Form
                     </ul>
                 </div>
 
-                <!-- Contenu des onglets (maintenant à droite) -->
-                <div class="ai-redactor-tabs-content-wrapper">
-                    <div class="ai-redactor-tabs-content">
+                <!-- Contenu des onglets (contenu à droite) -->
+                <div class="ai-agent-tabs-content-wrapper">
+                    <div class="ai-agent-tabs-content">
                         <?php foreach ($providers_config as $provider_id => $provider_data) :
                             // Récupérer la clé API
                             $api_key_option = $provider_data['api_key_option'];
@@ -114,89 +148,89 @@ class AI_Redactor_Admin_Form
                             $svg_path = WP_PLUGIN_AI_AGENT_URL . 'assets/svg/' . $provider_name . '.svg';
                         ?>
                             <div id="provider-<?php echo esc_attr($provider_id); ?>"
-                                class="ai-redactor-tab-content <?php echo $is_active_provider ? 'active' : ''; ?>">
+                                class="ai-agent-tab-content <?php echo $is_active_provider ? 'active' : ''; ?>">
 
                                 <h2>
-                                    <span class="ai-redactor-provider-icon">
+                                    <span class="ai-agent-provider-icon">
                                         <img src="<?php echo esc_url($svg_path); ?>"
                                             alt="<?php echo esc_attr($provider_data['name']); ?>"
-                                            class="ai-redactor-header-svg">
+                                            class="ai-agent-header-svg">
                                     </span>
                                     <?php echo esc_html($provider_data['name']); ?>
-                                    <span class="ai-redactor-provider-badge <?php echo $is_active_provider ? 'active' : 'inactive'; ?>">
+                                    <span class="ai-agent-provider-badge <?php echo $is_active_provider ? 'active' : 'inactive'; ?>">
                                         <?php echo $is_active_provider
-                                            ? esc_html__('Actif', 'ai-redactor')
-                                            : esc_html__('Inactif', 'ai-redactor'); ?>
+                                            ? esc_html__('Actif', 'wp-plugin-ai-agent')
+                                            : esc_html__('Inactif', 'wp-plugin-ai-agent'); ?>
                                     </span>
                                 </h2>
 
                                 <!-- Clé API -->
-                                <div class="ai-redactor-form-row">
+                                <div class="ai-agent-form-row">
                                     <label for="<?php echo esc_attr($api_key_option); ?>">
-                                        <?php echo esc_html__('Clé API', 'ai-redactor'); ?>
+                                        <?php echo esc_html__('Clé API', 'wp-plugin-ai-agent'); ?>
                                     </label>
                                     <p class="description">
                                         <?php echo sprintf(
-                                            esc_html__('Entrez votre clé API %s pour utiliser ce service.', 'ai-redactor'),
+                                            esc_html__('Entrez votre clé API %s pour utiliser ce service.', 'wp-plugin-ai-agent'),
                                             esc_html($provider_data['name'])
                                         ); ?>
                                     </p>
-                                    <div class="ai-redactor-api-key-input">
+                                    <div class="ai-agent-api-key-input">
                                         <input type="password"
                                             id="<?php echo esc_attr($api_key_option); ?>"
                                             name="<?php echo esc_attr($api_key_option); ?>"
                                             value="<?php echo esc_attr($api_key); ?>"
                                             class="regular-text"
-                                            placeholder="<?php echo esc_attr__('Coller votre clé API ici', 'ai-redactor'); ?>" />
-                                        <button type="button" class="button ai-redactor-toggle-api-key">
+                                            placeholder="<?php echo esc_attr__('Coller votre clé API ici', 'wp-plugin-ai-agent'); ?>" />
+                                        <button type="button" class="button ai-agent-toggle-api-key">
                                             <span class="dashicons dashicons-visibility"></span>
                                         </button>
                                     </div>
                                 </div>
 
                                 <!-- Modèles disponibles (avec cartes) -->
-                                <div class="ai-redactor-form-row">
-                                    <h3><?php echo esc_html__('Sélection du modèle actif', 'ai-redactor'); ?></h3>
+                                <div class="ai-agent-form-row">
+                                    <h3><?php echo esc_html__('Sélection du modèle actif', 'wp-plugin-ai-agent'); ?></h3>
                                     <p class="description">
-                                        <?php echo esc_html__('Choisissez le modèle d\'IA que vous souhaitez utiliser pour générer du contenu.', 'ai-redactor'); ?>
+                                        <?php echo esc_html__('Choisissez le modèle d\'IA que vous souhaitez utiliser pour générer du contenu.', 'wp-plugin-ai-agent'); ?>
                                     </p>
 
                                     <?php if (empty($provider_data['models'])) : ?>
-                                        <div class="ai-redactor-no-models">
-                                            <p><?php echo esc_html__('Aucun modèle disponible pour ce fournisseur.', 'ai-redactor'); ?></p>
+                                        <div class="ai-agent-no-models">
+                                            <p><?php echo esc_html__('Aucun modèle disponible pour ce fournisseur.', 'wp-plugin-ai-agent'); ?></p>
                                         </div>
                                     <?php else : ?>
-                                        <div class="ai-redactor-models-list">
+                                        <div class="ai-agent-models-list">
                                             <?php foreach ($provider_data['models'] as $model_id => $model_data) :
                                                 $combined_id = $provider_id . ':' . $model_id;
                                                 $is_active = ($combined_id === $active_model);
                                                 $is_popular = in_array($combined_id, $popular_models);
                                             ?>
-                                                <div class="ai-redactor-model-option <?php echo $is_active ? 'selected' : ''; ?>">
+                                                <div class="ai-agent-model-option <?php echo $is_active ? 'selected' : ''; ?>">
                                                     <label>
-                                                        <div class="ai-redactor-model-header">
+                                                        <div class="ai-agent-model-header">
                                                             <input type="radio"
-                                                                class="ai-redactor-model-radio"
-                                                                name="ai_redactor_active_model"
+                                                                class="ai-agent-model-radio"
+                                                                name="ai_agent_active_model"
                                                                 value="<?php echo esc_attr($combined_id); ?>"
                                                                 <?php checked($is_active); ?>>
-                                                            <span class="ai-redactor-model-name"><?php echo esc_html($model_data['label']); ?></span>
+                                                            <span class="ai-agent-model-name"><?php echo esc_html($model_data['label']); ?></span>
 
                                                             <?php if ($is_active) : ?>
-                                                                <span class="ai-redactor-model-badge active"><?php echo esc_html__('Actif', 'ai-redactor'); ?></span>
+                                                                <span class="ai-agent-model-badge active"><?php echo esc_html__('Actif', 'wp-plugin-ai-agent'); ?></span>
                                                             <?php elseif ($is_popular) : ?>
-                                                                <span class="ai-redactor-model-badge popular"><?php echo esc_html__('Populaire', 'ai-redactor'); ?></span>
+                                                                <span class="ai-agent-model-badge popular"><?php echo esc_html__('Populaire', 'wp-plugin-ai-agent'); ?></span>
                                                             <?php endif; ?>
                                                         </div>
 
                                                         <?php if (!empty($model_data['description'])) : ?>
-                                                            <div class="ai-redactor-model-description">
+                                                            <div class="ai-agent-model-description">
                                                                 <?php echo esc_html($model_data['description']); ?>
                                                             </div>
                                                         <?php endif; ?>
 
-                                                        <div class="ai-redactor-model-details">
-                                                            <div class="ai-redactor-model-detail-item">
+                                                        <div class="ai-agent-model-details">
+                                                            <div class="ai-agent-model-detail-item">
                                                                 <span><?php echo esc_html($model_data['cost']); ?></span>
                                                             </div>
                                                         </div>
@@ -208,25 +242,25 @@ class AI_Redactor_Admin_Form
                                 </div>
 
                                 <!-- Bouton de test -->
-                                <div class="ai-redactor-form-row">
+                                <div class="ai-agent-form-row">
                                     <button type="button"
-                                        class="ai-redactor-test-connection"
+                                        class="ai-agent-test-connection"
                                         data-provider="<?php echo esc_attr($provider_id); ?>">
                                         <span class="dashicons dashicons-update"></span>
-                                        <?php echo esc_html__('Tester la connexion', 'ai-redactor'); ?>
+                                        <?php echo esc_html__('Tester la connexion', 'wp-plugin-ai-agent'); ?>
                                     </button>
-                                    <span class="ai-redactor-connection-status" id="status-<?php echo esc_attr($provider_id); ?>"></span>
+                                    <span class="ai-agent-connection-status" id="status-<?php echo esc_attr($provider_id); ?>"></span>
                                 </div>
 
-                                <div class="ai-redactor-provider-info">
-                                    <h3><?php echo esc_html__('Informations sur les modèles disponibles', 'ai-redactor'); ?></h3>
+                                <div class="ai-agent-provider-info">
+                                    <h3><?php echo esc_html__('Informations sur les modèles disponibles', 'wp-plugin-ai-agent'); ?></h3>
                                     <table class="wp-list-table widefat fixed striped">
                                         <thead>
                                             <tr>
-                                                <th><?php echo esc_html__('Modèle', 'ai-redactor'); ?></th>
-                                                <th><?php echo esc_html__('Coût', 'ai-redactor'); ?></th>
-                                                <th><?php echo esc_html__('Tokens max', 'ai-redactor'); ?></th>
-                                                <th><?php echo esc_html__('Description', 'ai-redactor'); ?></th>
+                                                <th><?php echo esc_html__('Modèle', 'wp-plugin-ai-agent'); ?></th>
+                                                <th><?php echo esc_html__('Coût', 'wp-plugin-ai-agent'); ?></th>
+                                                <th><?php echo esc_html__('Tokens max', 'wp-plugin-ai-agent'); ?></th>
+                                                <th><?php echo esc_html__('Description', 'wp-plugin-ai-agent'); ?></th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -249,10 +283,10 @@ class AI_Redactor_Admin_Form
 
             <p class="submit">
                 <input type="submit"
-                    name="ai_redactor_connector_submit"
+                    name="ai_agent_connector_submit"
                     id="submit"
                     class="button button-primary"
-                    value="<?php echo esc_attr__('Enregistrer les modifications', 'ai-redactor'); ?>">
+                    value="<?php echo esc_attr__('Enregistrer les modifications', 'wp-plugin-ai-agent'); ?>">
             </p>
         </form>
 <?php

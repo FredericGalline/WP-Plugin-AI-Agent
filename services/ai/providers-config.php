@@ -41,6 +41,87 @@ return [
         'name'           => 'OpenAI',
         'api_key_option' => 'ai_redactor_openai_api_key',
         'models'         => [
+            'gpt-4.1' => [
+                'label'       => 'GPT-4.1',
+                'description' => 'Modèle phare avec une fenêtre de contexte étendue à 1 million de tokens, idéal pour les tâches complexes.',
+                'cost'        => 'Prompt: $2.00 / 1M tokens — Completion: $8.00 / 1M tokens',
+                'max_tokens'  => 1000000,
+                'enabled'     => true,
+                'status'      => 'stable',
+                'use_cases'   => [
+                    'long_form_content',
+                    'seo_optimized_articles',
+                    'complex_instruction_following',
+                    'multilingual_writing',
+                    'technical_documentation',
+                    'creative_writing',
+                    'structured_content_generation'
+                ],
+            ],
+            'gpt-4.1-mini' => [
+                'label'       => 'GPT-4.1 Mini',
+                'description' => 'Version allégée de GPT-4.1, offrant un bon compromis entre coût et performance.',
+                'cost'        => 'Prompt: $1.00 / 1M tokens — Completion: $4.00 / 1M tokens',
+                'max_tokens'  => 1000000,
+                'enabled'     => true,
+                'status'      => 'stable',
+                'use_cases'   => [
+                    'short_form_content',
+                    'seo_snippets',
+                    'product_descriptions',
+                    'email_copywriting',
+                    'social_media_posts',
+                    'fast_content_generation'
+                ],
+            ],
+            'gpt-4.1-nano' => [
+                'label'       => 'GPT-4.1 Nano',
+                'description' => 'Version ultra-légère de GPT-4.1, parfaite pour des tâches peu gourmandes ou répétitives.',
+                'cost'        => 'Prompt: $0.10 / 1M tokens — Completion: $0.40 / 1M tokens',
+                'max_tokens'  => 1000000,
+                'enabled'     => true,
+                'status'      => 'stable',
+                'use_cases'   => [
+                    'meta_descriptions',
+                    'title_generation',
+                    'real_time_classification',
+                    'autocomplete',
+                    'content_tagging',
+                    'lightweight_customer_support',
+                    'workflow_automation'
+                ],
+            ],
+            'gpt-4o' => [
+                'label'       => 'GPT-4 Omni (gpt-4o)',
+                'description' => 'Modèle multimodal performant, adapté pour des articles optimisés et la génération avec sources.',
+                'cost'        => 'Prompt: $5.00 / 1M tokens — Completion: $15.00 / 1M tokens',
+                'max_tokens'  => 128000,
+                'enabled'     => true,
+                'status'      => 'stable',
+                'use_cases'   => [
+                    'multimodal_content',
+                    'seo_optimized_articles',
+                    'comparative_analysis',
+                    'source_generation',
+                    'structured_content_generation'
+                ],
+            ],
+            'gpt-4o-mini' => [
+                'label'       => 'GPT-4o Mini',
+                'description' => 'Version légère de GPT-4o, idéale pour générer des introductions, titres ou méta-descriptions.',
+                'cost'        => 'Prompt: $0.15 / 1M tokens — Completion: $0.60 / 1M tokens',
+                'max_tokens'  => 8192,
+                'enabled'     => true,
+                'status'      => 'stable',
+                'use_cases'   => [
+                    'short_form_content',
+                    'meta_descriptions',
+                    'title_generation',
+                    'email_copywriting',
+                    'social_media_posts',
+                    'fast_content_generation'
+                ],
+            ],
             'gpt-3.5-turbo' => [
                 'label'       => 'GPT-3.5 Turbo',
                 'description' => 'Modèle rapide et économique, idéal pour les tâches simples, résumés ou articles courts.',
@@ -48,154 +129,232 @@ return [
                 'max_tokens'  => 16385,
                 'enabled'     => true,
                 'status'      => 'stable',
-            ],
-            'gpt-4o' => [
-                'label'       => 'GPT-4 Omni (gpt-4o)',
-                'description' => 'Modèle multimodal ultra performant, excellent pour les articles optimisés, les comparatifs ou la génération avec sources.',
-                'cost'        => 'Prompt: $5.00 / 1M tokens — Completion: $15.00 / 1M tokens',
-                'max_tokens'  => 128000,
-                'enabled'     => true,
-                'status'      => 'stable',
-            ],
-            'gpt-4o-mini' => [
-                'label'       => 'GPT-4o Mini',
-                'description' => 'Version légère du GPT-4o, idéale pour générer des introductions, titres ou méta-descriptions.',
-                'cost'        => 'Prompt: $1.00 / 1M tokens — Completion: $2.00 / 1M tokens',
-                'max_tokens'  => 8192,
-                'enabled'     => true,
-                'status'      => 'stable',
-            ],
-            'gpt-4.5-preview' => [
-                'label'       => 'GPT-4.5 Preview',
-                'description' => 'Excellente capacité de contexte (128K), idéal pour créer des articles longs, guides ou briefs SEO.',
-                'cost'        => 'Prompt: $15.00 / 1M tokens — Completion: $45.00 / 1M tokens',
-                'max_tokens'  => 128000,
-                'enabled'     => true,
-                'status'      => 'stable',
+                'use_cases'   => [
+                    'short_form_content',
+                    'summarization',
+                    'basic_seo_tasks',
+                    'email_copywriting',
+                    'social_media_posts'
+                ],
             ],
         ],
     ],
-
     'anthropic' => [
         'name'           => 'Anthropic',
         'api_key_option' => 'ai_redactor_anthropic_api_key',
         'models'         => [
             'claude-3-opus-latest' => [
                 'label'       => 'Claude 3 Opus',
-                'description' => 'Le plus intelligent des Claude. Idéal pour l’analyse poussée et la rédaction stratégique.',
+                'description' => 'Modèle le plus avancé de la gamme Claude, conçu pour des tâches complexes nécessitant une compréhension approfondie.',
                 'cost'        => 'Prompt: $15.00 / 1M tokens — Completion: $75.00 / 1M tokens',
                 'max_tokens'  => 200000,
                 'enabled'     => true,
                 'status'      => 'stable',
+                'use_cases'   => [
+                    'long_form_content',
+                    'seo_optimized_articles',
+                    'complex_instruction_following',
+                    'technical_documentation',
+                    'multilingual_writing',
+                    'structured_content_generation'
+                ],
             ],
             'claude-3-5-haiku-latest' => [
-                'label'       => 'Claude 3 Haiku',
-                'description' => 'Le plus rapide et économique des modèles Claude. Parfait pour les contenus courts ou fréquents.',
+                'label'       => 'Claude 3.5 Haiku',
+                'description' => 'Modèle rapide et économique, idéal pour des tâches simples et répétitives avec une efficacité optimale.',
                 'cost'        => 'Prompt: $0.80 / 1M tokens — Completion: $4.00 / 1M tokens',
                 'max_tokens'  => 200000,
                 'enabled'     => true,
                 'status'      => 'stable',
+                'use_cases'   => [
+                    'short_form_content',
+                    'seo_snippets',
+                    'product_descriptions',
+                    'email_copywriting',
+                    'social_media_posts',
+                    'fast_content_generation'
+                ],
             ],
             'claude-3-7-sonnet-latest' => [
-                'label'       => 'Claude 3 Sonnet',
-                'description' => 'Bon équilibre coût/perf, mais actuellement indisponible via l’API ou renvoie une erreur.',
+                'label'       => 'Claude 3.7 Sonnet',
+                'description' => 'Modèle équilibré offrant un bon compromis entre coût et performance, adapté pour des articles de fond à budget maîtrisé.',
                 'cost'        => 'Prompt: $3.00 / 1M tokens — Completion: $15.00 / 1M tokens',
                 'max_tokens'  => 200000,
-                'enabled'     => false,
-                'status'      => 'error',
+                'enabled'     => true,
+                'status'      => 'stable',
+                'use_cases'   => [
+                    'long_form_content',
+                    'seo_optimized_articles',
+                    'technical_documentation',
+                    'structured_content_generation',
+                    'multilingual_writing'
+                ],
             ],
         ],
     ],
-
     'mistral' => [
         'name'           => 'Mistral AI',
         'api_key_option' => 'ai_redactor_mistral_api_key',
         'models'         => [
             'mistral-small-latest' => [
                 'label'       => 'Mistral Small',
-                'description' => 'Économique et rapide, bon pour des tâches simples ou en masse.',
-                'cost'        => 'Prompt: $0.15 / 1M tokens — Completion: $0.40 / 1M tokens',
-                'max_tokens'  => 32000,
+                'description' => 'Modèle économique et rapide, idéal pour des tâches simples ou en masse.',
+                'cost'        => 'Prompt: $0.20 / 1M tokens — Completion: $0.60 / 1M tokens',
+                'max_tokens'  => 33000,
                 'enabled'     => false,
                 'status'      => 'missing_api_key',
+                'use_cases'   => [
+                    'short_form_content',
+                    'seo_snippets',
+                    'product_descriptions',
+                    'email_copywriting',
+                    'social_media_posts',
+                    'fast_content_generation'
+                ],
             ],
             'mistral-medium-latest' => [
                 'label'       => 'Mistral Medium',
-                'description' => 'Bon rapport qualité/prix. Idéal pour articles de fond à budget maîtrisé.',
-                'cost'        => 'Prompt: $0.60 / 1M tokens — Completion: $1.50 / 1M tokens',
-                'max_tokens'  => 32000,
+                'description' => 'Bon rapport qualité/prix, adapté pour des articles de fond à budget maîtrisé.',
+                'cost'        => 'Prompt: $2.75 / 1M tokens — Completion: $8.10 / 1M tokens',
+                'max_tokens'  => 33000,
                 'enabled'     => false,
                 'status'      => 'missing_api_key',
+                'use_cases'   => [
+                    'long_form_content',
+                    'seo_optimized_articles',
+                    'technical_documentation',
+                    'structured_content_generation',
+                    'multilingual_writing'
+                ],
             ],
             'mistral-large-latest' => [
                 'label'       => 'Mistral Large',
-                'description' => 'Modèle très avancé (SOTA). Convient pour rédaction analytique ou expert-level.',
-                'cost'        => 'Prompt: $8.00 / 1M tokens — Completion: $24.00 / 1M tokens',
-                'max_tokens'  => 32000,
+                'description' => 'Modèle très avancé (SOTA), convient pour la rédaction analytique ou de niveau expert.',
+                'cost'        => 'Prompt: $4.00 / 1M tokens — Completion: $12.00 / 1M tokens',
+                'max_tokens'  => 128000,
                 'enabled'     => false,
                 'status'      => 'missing_api_key',
+                'use_cases'   => [
+                    'complex_instruction_following',
+                    'long_form_content',
+                    'seo_optimized_articles',
+                    'technical_documentation',
+                    'creative_writing',
+                    'structured_content_generation',
+                    'multilingual_writing'
+                ],
             ],
         ],
     ],
-
     'gemini' => [
         'name'           => 'Google Gemini',
         'api_key_option' => 'ai_redactor_google_api_key',
         'models'         => [
             'gemini-1.5-pro-latest' => [
-                'label'       => 'Gemini 1.5 Pro (Preview)',
-                'description' => 'Modèle ultra contextuel (1M tokens). Excellent pour des contenus longs et complexes.',
-                'cost'        => 'Gratuit (preview)',
-                'max_tokens'  => 1048576,
+                'label'       => 'Gemini 1.5 Pro',
+                'description' => 'Modèle multimodal avancé avec une fenêtre de contexte étendue, idéal pour des contenus longs et complexes.',
+                'cost'        => 'Prompt: $1.25 / 1M tokens (≤128k) — $2.50 / 1M tokens (>128k) | Completion: $5.00 / 1M tokens (≤128k) — $10.00 / 1M tokens (>128k)',
+                'max_tokens'  => 2097152,
                 'enabled'     => true,
-                'status'      => 'preview',
+                'status'      => 'stable',
+                'use_cases'   => [
+                    'long_form_content',
+                    'seo_optimized_articles',
+                    'complex_instruction_following',
+                    'multilingual_writing',
+                    'technical_documentation',
+                    'structured_content_generation'
+                ],
             ],
             'gemini-1.5-flash-latest' => [
-                'label'       => 'Gemini 1.5 Flash (Preview)',
-                'description' => 'Version plus rapide du 1.5 Pro. Réactif pour contenus courts ou temps réel.',
-                'cost'        => 'Gratuit (preview)',
+                'label'       => 'Gemini 1.5 Flash',
+                'description' => 'Modèle rapide et polyvalent, adapté pour des tâches diverses avec une grande fenêtre de contexte.',
+                'cost'        => 'Prompt: $0.075 / 1M tokens (≤128k) — $0.15 / 1M tokens (>128k) | Completion: $0.30 / 1M tokens (≤128k) — $0.60 / 1M tokens (>128k)',
                 'max_tokens'  => 1048576,
                 'enabled'     => true,
-                'status'      => 'preview',
+                'status'      => 'stable',
+                'use_cases'   => [
+                    'short_form_content',
+                    'seo_snippets',
+                    'product_descriptions',
+                    'email_copywriting',
+                    'social_media_posts',
+                    'fast_content_generation'
+                ],
+            ],
+            'gemini-1.5-flash-8b-latest' => [
+                'label'       => 'Gemini 1.5 Flash-8B',
+                'description' => 'Modèle léger conçu pour des tâches simples et répétitives avec une efficacité optimale.',
+                'cost'        => 'Prompt: $0.0375 / 1M tokens (≤128k) — $0.075 / 1M tokens (>128k) | Completion: $0.15 / 1M tokens (≤128k) — $0.30 / 1M tokens (>128k)',
+                'max_tokens'  => 1048576,
+                'enabled'     => true,
+                'status'      => 'stable',
+                'use_cases'   => [
+                    'meta_descriptions',
+                    'title_generation',
+                    'real_time_classification',
+                    'autocomplete',
+                    'content_tagging',
+                    'lightweight_customer_support',
+                    'workflow_automation'
+                ],
             ],
         ],
     ],
-
     'grok' => [
         'name'           => 'Grok (xAI)',
         'api_key_option' => 'ai_redactor_grok_api_key',
         'models'         => [
-
             'grok-2' => [
                 'label'       => 'Grok 2',
-                'description' => 'Version la plus récente du modèle Grok 2 avec les dernières mises à jour internes. Excellent pour la rédaction contextuelle longue.',
+                'description' => 'Modèle avancé avec une fenêtre de contexte de 128k tokens, adapté pour la rédaction contextuelle longue.',
                 'cost'        => 'Prompt: $2.00 / 1M tokens — Completion: $10.00 / 1M tokens',
                 'max_tokens'  => 131072,
                 'enabled'     => true,
                 'status'      => 'stable',
+                'use_cases'   => [
+                    'long_form_content',
+                    'seo_optimized_articles',
+                    'technical_documentation',
+                    'structured_content_generation',
+                    'multilingual_writing'
+                ],
             ],
-
-            // 🔹 VERSION STABLE RECOMMANDÉE
             'grok-2-latest' => [
                 'label'       => 'Grok 2 (Latest)',
-                'description' => 'Version la plus récente du modèle Grok 2 avec les dernières mises à jour internes. Excellent pour la rédaction contextuelle longue.',
+                'description' => 'Version la plus récente du modèle Grok 2 avec les dernières mises à jour internes.',
                 'cost'        => 'Prompt: $2.00 / 1M tokens — Completion: $10.00 / 1M tokens',
                 'max_tokens'  => 131072,
                 'enabled'     => true,
                 'status'      => 'stable',
+                'use_cases'   => [
+                    'long_form_content',
+                    'seo_optimized_articles',
+                    'technical_documentation',
+                    'structured_content_generation',
+                    'multilingual_writing'
+                ],
             ],
-
-            // 🔹 VERSION BÊTA POUR TESTS AVANCÉS
-            'grok-beta' => [
+            'grok-3-beta' => [
                 'label'       => 'Grok 3 (Bêta)',
-                'description' => 'Modèle de nouvelle génération de xAI, actuellement en version bêta. Offre des capacités de raisonnement avancées avec une fenêtre contextuelle étendue.',
-                'cost'        => 'Non communiqué',
-                'max_tokens'  => 1048576, // 1M tokens
+                'description' => 'Modèle de nouvelle génération avec une fenêtre de contexte de 1 million de tokens, offrant des capacités de raisonnement avancées.',
+                'cost'        => 'Prompt: $3.00 / 1M tokens — Completion: $15.00 / 1M tokens',
+                'max_tokens'  => 1048576,
                 'enabled'     => false,
                 'status'      => 'beta',
+                'use_cases'   => [
+                    'complex_instruction_following',
+                    'long_form_content',
+                    'seo_optimized_articles',
+                    'technical_documentation',
+                    'creative_writing',
+                    'structured_content_generation',
+                    'multilingual_writing'
+                ],
             ],
         ],
     ],
+
 
 
 ];

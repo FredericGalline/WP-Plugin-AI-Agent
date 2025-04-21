@@ -119,7 +119,7 @@ function ai_redactor_get_providers_config()
 function ai_redactor_get_active_provider()
 {
     // D'abord essayer de l'extraire du modèle actif
-    $active_model = get_option('ai_redactor_active_model', '');
+    $active_model = get_option('ai_agent_active_model', '');
     if (!empty($active_model)) {
         $parts = explode(':', $active_model);
         if (count($parts) === 2) {
@@ -138,7 +138,7 @@ function ai_redactor_get_active_provider()
  */
 function ai_redactor_get_active_model()
 {
-    $active_model_combined = get_option('ai_redactor_active_model', '');
+    $active_model_combined = get_option('ai_agent_active_model', '');
 
     if (!empty($active_model_combined)) {
         $parts = explode(':', $active_model_combined);

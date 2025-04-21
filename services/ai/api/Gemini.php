@@ -50,8 +50,8 @@ class AI_Gemini_API
      */
     public static function send_request($prompt, $model, $api_key)
     {
-        if (defined('AI_REDACTOR_DEBUG') && AI_REDACTOR_DEBUG) {
-            error_log("[AI Redactor] Envoi d'une requête à Google Gemini. Modèle : $model");
+        if (defined('AI_AGENT_DEBUG') && AI_AGENT_DEBUG) {
+            ai_agent_log('Configuration de la requête Gemini - Modèle: ' . $model, 'debug');
         }
 
         $api_url = 'https://generativelanguage.googleapis.com/v1beta/models/' . urlencode($model) . ':generateContent';
@@ -84,7 +84,7 @@ class AI_Gemini_API
 
         if (is_wp_error($response)) {
             $error_message = $response->get_error_message();
-            if (defined('AI_REDACTOR_DEBUG') && AI_REDACTOR_DEBUG) {
+            if (defined('AI_AGENT_DEBUG') && AI_AGENT_DEBUG) {
                 error_log("[AI Redactor] Erreur API Gemini : $error_message");
             }
 
@@ -101,7 +101,7 @@ class AI_Gemini_API
 
         if ($response_code !== 200) {
             $error_message = $response_data['error']['message'] ?? "Erreur inconnue (code $response_code)";
-            if (defined('AI_REDACTOR_DEBUG') && AI_REDACTOR_DEBUG) {
+            if (defined('AI_AGENT_DEBUG') && AI_AGENT_DEBUG) {
                 error_log("[AI Redactor] Erreur API Gemini : $error_message");
             }
 
@@ -118,7 +118,7 @@ class AI_Gemini_API
         ) {
             $content = $response_data['candidates'][0]['content']['parts'][0]['text'];
 
-            if (defined('AI_REDACTOR_DEBUG') && AI_REDACTOR_DEBUG) {
+            if (defined('AI_AGENT_DEBUG') && AI_AGENT_DEBUG) {
                 error_log('[AI Redactor] Réponse Gemini reçue avec succès.');
             }
 
@@ -128,7 +128,7 @@ class AI_Gemini_API
                 'error' => null
             ];
         } else {
-            if (defined('AI_REDACTOR_DEBUG') && AI_REDACTOR_DEBUG) {
+            if (defined('AI_AGENT_DEBUG') && AI_AGENT_DEBUG) {
                 error_log('[AI Redactor] Format de réponse Gemini inattendu : ' . $response_body);
             }
 

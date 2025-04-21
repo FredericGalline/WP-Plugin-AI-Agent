@@ -43,8 +43,8 @@ class AI_OpenAI_API
 {
     public static function send_request($prompt, $model, $api_key)
     {
-        if (defined('AI_REDACTOR_DEBUG') && AI_REDACTOR_DEBUG) {
-            error_log('[AI Redactor] Envoi d\'une requête à OpenAI. Modèle: ' . $model);
+        if (defined('AI_AGENT_DEBUG') && AI_AGENT_DEBUG) {
+            ai_agent_log('Configuration de la requête OpenAI - Modèle: ' . $model, 'debug');
         }
 
         $api_url = 'https://api.openai.com/v1/chat/completions';

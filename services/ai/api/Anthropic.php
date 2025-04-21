@@ -50,8 +50,8 @@ class AI_Anthropic_API
      */
     public static function send_request($prompt, $model, $api_key)
     {
-        if (defined('AI_REDACTOR_DEBUG') && AI_REDACTOR_DEBUG) {
-            error_log("[AI Redactor] Envoi d'une requête à Anthropic. Modèle : $model");
+        if (defined('AI_AGENT_DEBUG') && AI_AGENT_DEBUG) {
+            ai_agent_log('Configuration de la requête Anthropic - Modèle: ' . $model, 'debug');
         }
 
         $api_url = 'https://api.anthropic.com/v1/messages';
@@ -83,8 +83,8 @@ class AI_Anthropic_API
 
         if (is_wp_error($response)) {
             $error_message = $response->get_error_message();
-            if (defined('AI_REDACTOR_DEBUG') && AI_REDACTOR_DEBUG) {
-                error_log("[AI Redactor] Erreur API Anthropic : $error_message");
+            if (defined('AI_AGENT_DEBUG') && AI_AGENT_DEBUG) {
+                ai_agent_log('Erreur API Anthropic : ' . $error_message, 'error');
             }
 
             return [
@@ -100,8 +100,8 @@ class AI_Anthropic_API
 
         if ($response_code !== 200) {
             $error_message = $response_data['error']['message'] ?? "Erreur inconnue (code $response_code)";
-            if (defined('AI_REDACTOR_DEBUG') && AI_REDACTOR_DEBUG) {
-                error_log("[AI Redactor] Erreur API Anthropic : $error_message");
+            if (defined('AI_AGENT_DEBUG') && AI_AGENT_DEBUG) {
+                ai_agent_log('Erreur API Anthropic : ' . $error_message, 'error');
             }
 
             return [
@@ -113,8 +113,8 @@ class AI_Anthropic_API
 
         if (isset($response_data['content'][0]['text'])) {
             $content = $response_data['content'][0]['text'];
-            if (defined('AI_REDACTOR_DEBUG') && AI_REDACTOR_DEBUG) {
-                error_log("[AI Redactor] Réponse Anthropic reçue avec succès.");
+            if (defined('AI_AGENT_DEBUG') && AI_AGENT_DEBUG) {
+                ai_agent_log('Réponse Anthropic reçue avec succès.', 'info');
             }
 
             return [
@@ -123,8 +123,8 @@ class AI_Anthropic_API
                 'error' => null,
             ];
         } else {
-            if (defined('AI_REDACTOR_DEBUG') && AI_REDACTOR_DEBUG) {
-                error_log("[AI Redactor] Format de réponse inattendu : $response_body");
+            if (defined('AI_AGENT_DEBUG') && AI_AGENT_DEBUG) {
+                ai_agent_log('Format de réponse inattendu : ' . $response_body, 'warning');
             }
 
             return [

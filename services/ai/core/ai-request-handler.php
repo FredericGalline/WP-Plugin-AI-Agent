@@ -8,25 +8,16 @@
  * l'envoi des prompts et la réception des réponses, en fonction du fournisseur et du modèle
  * actuellement sélectionnés dans les paramètres du plugin.
  *
- * @package AI_Redactor
+ * @package WP_Plugin_AI_Agent
  * @subpackage Services\AI\Core
  *
  * @depends WordPress Options API
  * @depends wp_remote_post
- * @depends error_log
  * @depends require_once
  *
  * @css N/A - Ce fichier est un gestionnaire de requêtes sans interface utilisateur directe
  *
  * @js N/A - Ce fichier est un gestionnaire de requêtes sans interface utilisateur directe
- *
- * @ai Ce fichier est exclusivement dédié à la gestion des requêtes vers les APIs des fournisseurs d'IA.
- * Il ne contient aucune logique métier liée à la génération de contenu par IA, ni d'algorithmes d'IA.
- * Sa responsabilité est strictement limitée à : (1) récupérer les paramètres du fournisseur et du modèle
- * actifs, (2) valider les configurations (clé API, modèle, etc.), (3) déléguer l'envoi des prompts à la
- * classe API correspondante (par exemple, AI_OpenAI_API, AI_Anthropic_API, etc.), et (4) retourner les
- * réponses ou erreurs de manière standardisée. Toute modification des fournisseurs ou des modèles doit
- * être reflétée dans ce fichier pour garantir une compatibilité avec les nouvelles configurations.
  */
 
 // Empêcher l'accès direct au fichier
@@ -51,7 +42,7 @@ class AI_Request_Handler
         $providers_config = require dirname(dirname(__FILE__)) . '/providers-config.php';
 
         // Récupérer le fournisseur et le modèle actifs (nouveau format: provider:model)
-        $active_model_combined = get_option('ai_redactor_active_model', '');
+        $active_model_combined = get_option('ai_agent_active_model', '');
 
         $active_provider = '';
         $active_model = '';
@@ -64,25 +55,24 @@ class AI_Request_Handler
             }
         }
 
-        // Journalisation de débogage
-        if (defined('AI_REDACTOR_DEBUG') && AI_REDACTOR_DEBUG) {
-            error_log('[AI Redactor] Modèle actif: ' . $active_model_combined);
-            error_log('[AI Redactor] Fournisseur extrait: ' . $active_provider);
-            error_log('[AI Redactor] Modèle extrait: ' . $active_model);
+        // Journaliser les informations sur le modèle actif
+        ai_agent_log('Tentative d\'envoi de prompt à ' . $active_model_combined, 'info');
+        ai_agent_log('Fournisseur extrait: ' . $active_provider, 'debug');
+        ai_agent_log('Modèle extrait: ' . $active_model, 'debug');
 
-            if (isset($providers_config[$active_provider])) {
-                error_log('[AI Redactor] Fournisseur trouvé dans la config');
+        // Vérifier si les informations de fournisseur et modèle sont valides
+        if (isset($providers_config[$active_provider])) {
+            ai_agent_log('Fournisseur trouvé dans la config', 'debug');
 
-                if (isset($providers_config[$active_provider]['models'][$active_model])) {
-                    error_log('[AI Redactor] Modèle trouvé dans la config');
-                } else {
-                    error_log('[AI Redactor] Modèle NON trouvé dans la config. Modèles disponibles: ' .
-                        implode(', ', array_keys($providers_config[$active_provider]['models'])));
-                }
+            if (isset($providers_config[$active_provider]['models'][$active_model])) {
+                ai_agent_log('Modèle trouvé dans la config', 'debug');
             } else {
-                error_log('[AI Redactor] Fournisseur NON trouvé dans la config. Fournisseurs disponibles: ' .
-                    implode(', ', array_keys($providers_config)));
+                ai_agent_log('Modèle NON trouvé dans la config. Modèles disponibles: ' .
+                    implode(', ', array_keys($providers_config[$active_provider]['models'])), 'warning');
             }
+        } else {
+            ai_agent_log('Fournisseur NON trouvé dans la config. Fournisseurs disponibles: ' .
+                implode(', ', array_keys($providers_config)), 'warning');
         }
 
         // Si le format combiné n'est pas utilisé, utiliser l'ancienne méthode
@@ -90,35 +80,29 @@ class AI_Request_Handler
             $active_provider = get_option('ai_redactor_active_provider', '');
             $active_model = get_option('ai_redactor_' . $active_provider . '_active_model', '');
 
-            if (defined('AI_REDACTOR_DEBUG') && AI_REDACTOR_DEBUG) {
-                error_log('[AI Redactor] Méthode alternative - Fournisseur: ' . $active_provider);
-                error_log('[AI Redactor] Méthode alternative - Modèle: ' . $active_model);
-            }
+            ai_agent_log('Méthode alternative - Fournisseur: ' . $active_provider, 'debug');
+            ai_agent_log('Méthode alternative - Modèle: ' . $active_model, 'debug');
         }
 
         // Vérifier si le fournisseur est valide
         if (empty($active_provider) || !isset($providers_config[$active_provider])) {
-            if (defined('AI_REDACTOR_DEBUG') && AI_REDACTOR_DEBUG) {
-                error_log('[AI Redactor] Erreur: Fournisseur non valide ou non configuré');
-            }
+            ai_agent_log('Erreur: Fournisseur non valide ou non configuré', 'error');
 
             return [
                 'success' => false,
                 'response' => null,
-                'error' => 'Aucun fournisseur d\'IA valide sélectionné. Veuillez en configurer un dans les paramètres d\'AI Redactor.'
+                'error' => 'Aucun fournisseur d\'IA valide sélectionné. Veuillez en configurer un dans les paramètres d\'AI Agent.'
             ];
         }
 
         // Vérifier si le modèle est valide
         if (empty($active_model) || !isset($providers_config[$active_provider]['models'][$active_model])) {
-            if (defined('AI_REDACTOR_DEBUG') && AI_REDACTOR_DEBUG) {
-                error_log('[AI Redactor] Erreur: Modèle non valide ou non configuré');
-            }
+            ai_agent_log('Erreur: Modèle non valide ou non configuré', 'error');
 
             return [
                 'success' => false,
                 'response' => null,
-                'error' => 'Aucun modèle valide sélectionné pour ' . $providers_config[$active_provider]['name'] . '. Veuillez en sélectionner un dans les paramètres d\'AI Redactor.'
+                'error' => 'Aucun modèle valide sélectionné pour ' . $providers_config[$active_provider]['name'] . '. Veuillez en sélectionner un dans les paramètres d\'AI Agent.'
             ];
         }
 
@@ -131,7 +115,7 @@ class AI_Request_Handler
             return [
                 'success' => false,
                 'response' => null,
-                'error' => 'Clé API non configurée pour ' . $providers_config[$active_provider]['name'] . '. Veuillez l\'ajouter dans les paramètres d\'AI Redactor.'
+                'error' => 'Clé API non configurée pour ' . $providers_config[$active_provider]['name'] . '. Veuillez l\'ajouter dans les paramètres d\'AI Agent.'
             ];
         }
 
@@ -170,9 +154,7 @@ class AI_Request_Handler
 
         $api_class = $api_class_map[$active_provider];
 
-        if (defined('AI_REDACTOR_DEBUG') && AI_REDACTOR_DEBUG) {
-            error_log('[AI Redactor] Délégation de la requête à la classe: ' . $api_class);
-        }
+        ai_agent_log('Délégation de la requête à la classe: ' . $api_class, 'debug');
 
         // Appeler la méthode send_request de la classe API correspondante
         return $api_class::send_request($prompt, $active_model, $api_key);

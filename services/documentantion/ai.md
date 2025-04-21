@@ -35,7 +35,7 @@ Permettre à un développeur de comprendre rapidement comment sont gérées les 
 
 - **Méthode principale** : `send_prompt($prompt)`
 - Elle :
-  - lit le modèle actif dans `get_option('ai_redactor_active_model')` (format `provider:model`)
+  - lit le modèle actif dans `get_option('ai_agent_active_model')` (format `provider:model`)
   - lit la clé API correspondante dans la config
   - délègue la requête à la classe du provider via :
 

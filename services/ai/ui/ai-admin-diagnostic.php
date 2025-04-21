@@ -93,16 +93,8 @@ class AI_Redactor_Admin_Diagnostic
      */
     private function log($message)
     {
-        if (defined('AI_REDACTOR_DEBUG') && AI_REDACTOR_DEBUG) {
-            $timestamp = date('[Y-m-d H:i:s]');
-
-            if (is_array($message) || is_object($message)) {
-                $message = print_r($message, true);
-            }
-
-            file_put_contents($this->log_file, $timestamp . ' ' . $message . "\n", FILE_APPEND);
-            error_log('[AI Diagnostic] ' . $message);
-        }
+        // Utiliser la fonction de journalisation de l'agent AI au lieu de AI_REDACTOR_DEBUG
+        ai_agent_log($message, 'debug');
     }
 
     /**
@@ -141,9 +133,9 @@ class AI_Redactor_Admin_Diagnostic
         $result['api_key_status'] = 'ok';
 
         // Définir le modèle actif temporairement pour le test
-        $active_model_backup = get_option('ai_redactor_active_model', '');
+        $active_model_backup = get_option('ai_agent_active_model', '');
         $test_model = $provider_id . ':' . $model_id;
-        update_option('ai_redactor_active_model', $test_model);
+        update_option('ai_agent_active_model', $test_model);
 
         $this->log("Test du modèle: " . $test_model);
         $this->log("Prompt: " . $this->test_prompt);
@@ -179,7 +171,7 @@ class AI_Redactor_Admin_Diagnostic
         }
 
         // Restaurer le modèle actif
-        update_option('ai_redactor_active_model', $active_model_backup);
+        update_option('ai_agent_active_model', $active_model_backup);
 
         return $result;
     }
@@ -376,7 +368,7 @@ class AI_Redactor_Admin_Diagnostic
                             }, $api_status));
 
                             $total_providers = count($api_status);
-                            $active_model = get_option('ai_redactor_active_model', '');
+                            $active_model = get_option('ai_agent_active_model', '');
                             $active_provider = '';
                             $active_model_name = '';
 
@@ -768,7 +760,7 @@ class AI_Redactor_Admin_Diagnostic
                     </div>
                 <?php endif; ?>
 
-                <?php if (defined('AI_REDACTOR_DEBUG') && AI_REDACTOR_DEBUG): ?>
+                <?php if (function_exists('ai_agent_get_debug_mode') && ai_agent_get_debug_mode()): ?>
                     <div class="ai-redactor-card">
                         <div class="ai-redactor-card-header">
                             <h2><?php echo esc_html__('Informations de diagnostic', 'ai-redactor'); ?></h2>

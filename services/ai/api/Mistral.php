@@ -43,9 +43,8 @@ class AI_Mistral_API
 {
     public static function send_request($prompt, $model, $api_key)
     {
-        if (defined('AI_REDACTOR_DEBUG') && AI_REDACTOR_DEBUG) {
-            error_log("[AI Redactor] Envoi d'une requête à Mistral. Modèle : $model");
-        }
+        // Utiliser la fonction de journalisation au lieu de error_log avec vérification de constante
+        ai_agent_log("Envoi d'une requête à Mistral. Modèle : $model", 'debug');
 
         $api_url = 'https://api.mistral.ai/v1/chat/completions';
 

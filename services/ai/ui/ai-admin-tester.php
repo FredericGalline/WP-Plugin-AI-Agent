@@ -73,8 +73,8 @@ class AI_Redactor_Admin_Tester
 
             // Réinitialiser le modèle actif
             if ($action === 'reset_model') {
-                delete_option('ai_redactor_active_model');
-                add_settings_error('ai_redactor_tester', 'model_reset', __('Modèle actif réinitialisé avec succès!', 'ai-redactor'), 'success');
+                delete_option('ai_agent_active_model');
+                add_settings_error('ai_agent_tester', 'model_reset', __('Modèle actif réinitialisé avec succès!', 'ai-agent'), 'success');
                 $show_diagnostic = true;
             }
             // Définir un nouveau modèle actif
@@ -85,12 +85,12 @@ class AI_Redactor_Admin_Tester
                     $model_id = $parts[2];
 
                     $new_active_model = $provider_id . ':' . $model_id;
-                    update_option('ai_redactor_active_model', $new_active_model);
+                    update_option('ai_agent_active_model', $new_active_model);
 
                     add_settings_error(
-                        'ai_redactor_tester',
+                        'ai_agent_tester',
                         'model_updated',
-                        sprintf(__('Modèle actif défini avec succès: %s', 'ai-redactor'), $new_active_model),
+                        sprintf(__('Modèle actif défini avec succès: %s', 'ai-agent'), $new_active_model),
                         'success'
                     );
                     $show_diagnostic = true;
@@ -109,21 +109,24 @@ class AI_Redactor_Admin_Tester
                 require_once dirname(dirname(__FILE__)) . '/core/ai-request-handler.php';
 
                 // Mesurer le temps de réponse si le mode debug est activé
-                if (defined('AI_REDACTOR_DEBUG') && AI_REDACTOR_DEBUG) {
+                if (defined('AI_AGENT_DEBUG') && AI_AGENT_DEBUG) {
                     $start_time = microtime(true);
                 }
 
                 // Définir une limite de temps d'exécution plus longue pour les modèles qui peuvent être lents
                 $original_time_limit = ini_get('max_execution_time');
-                set_time_limit(120); // 2 minutes
+                set_time_limit(180); // 3 minutes pour donner plus de temps aux modèles lents
 
                 try {
                     // Envoyer le prompt à l'IA
+                    ai_agent_log('Envoi du prompt au testeur IA : ' . substr($prompt, 0, 100) . '...', 'info');
                     $result = AI_Request_Handler::send_prompt($prompt);
+                    ai_agent_log('Réponse reçue du testeur IA', 'info');
 
                     // Calculer le temps de réponse
-                    if (defined('AI_REDACTOR_DEBUG') && AI_REDACTOR_DEBUG) {
+                    if (defined('AI_AGENT_DEBUG') && AI_AGENT_DEBUG) {
                         $response_time = microtime(true) - $start_time;
+                        ai_agent_log('Temps de réponse : ' . $response_time . ' secondes', 'debug');
                     }
                 } catch (Exception $e) {
                     // Capturer toute exception non gérée
@@ -133,9 +136,7 @@ class AI_Redactor_Admin_Tester
                         'error' => 'Exception: ' . $e->getMessage()
                     ];
 
-                    if (defined('AI_REDACTOR_DEBUG') && AI_REDACTOR_DEBUG) {
-                        error_log('[AI Redactor] Exception non gérée: ' . $e->getMessage());
-                    }
+                    ai_agent_log('Exception lors du test de prompt : ' . $e->getMessage(), 'error');
                 }
 
                 // Restaurer la limite de temps d'origine
@@ -203,9 +204,9 @@ class AI_Redactor_Admin_Tester
                             <?php endif; ?>
                         </p>
 
-                        <?php if (defined('AI_REDACTOR_DEBUG') && AI_REDACTOR_DEBUG): ?>
+                        <?php if (defined('AI_AGENT_DEBUG') && AI_AGENT_DEBUG): ?>
                             <div class="ai-redactor-debug-info">
-                                <p><strong>Debug - Valeur stockée:</strong> <?php echo esc_html(get_option('ai_redactor_active_model', 'Non définie')); ?></p>
+                                <p><strong>Debug - Valeur stockée:</strong> <?php echo esc_html(get_option('ai_agent_active_model', 'Non définie')); ?></p>
                                 <p><strong>Debug - ID Fournisseur:</strong> <?php echo esc_html($active_model_info['provider_id']); ?></p>
                                 <p><strong>Debug - ID Modèle:</strong> <?php echo esc_html($active_model_info['model_id']); ?></p>
                             </div>
@@ -216,7 +217,7 @@ class AI_Redactor_Admin_Tester
                                 <?php
                                 echo sprintf(
                                     __('Pour utiliser ce modèle, vous devez configurer une clé API dans <a href="%s">Connecteurs IA</a>.', 'ai-redactor'),
-                                    admin_url('admin.php?page=ai-redactor-connectors')
+                                    admin_url('admin.php?page=ai-agent-connectors')
                                 );
                                 ?>
                             </p>
@@ -227,7 +228,7 @@ class AI_Redactor_Admin_Tester
                         <?php
                         echo sprintf(
                             __('Aucun modèle n\'est actuellement sélectionné. Veuillez en configurer un dans <a href="%s">Connecteurs IA</a>.', 'ai-redactor'),
-                            admin_url('admin.php?page=ai-redactor-connectors')
+                            admin_url('admin.php?page=ai-agent-connectors')
                         );
                         ?>
                     </p>
@@ -249,7 +250,7 @@ class AI_Redactor_Admin_Tester
                         <h3><?php echo esc_html__('Analyse de la configuration', 'ai-redactor'); ?></h3>
 
                         <?php
-                        $active_model_combined = get_option('ai_redactor_active_model', '');
+                        $active_model_combined = get_option('ai_agent_active_model', '');
                         $parts = explode(':', $active_model_combined);
                         $active_provider = isset($parts[0]) ? $parts[0] : '';
                         $active_model = isset($parts[1]) ? $parts[1] : '';
@@ -387,7 +388,7 @@ class AI_Redactor_Admin_Tester
                     <h2><?php echo esc_html__('Tester un prompt', 'ai-redactor'); ?></h2>
                 </div>
 
-                <form method="post" action="" id="ai-redactor-test-form">
+                <form method="post" action="<?php echo esc_url($_SERVER['REQUEST_URI']); ?>" id="ai-redactor-test-form">
                     <?php wp_nonce_field('ai_redactor_test_prompt', 'ai_redactor_test_prompt_nonce'); ?>
 
                     <div class="ai-redactor-form-row">
@@ -400,13 +401,18 @@ class AI_Redactor_Admin_Tester
 
                     <p class="submit">
                         <input type="submit" name="ai_redactor_test_prompt_submit" id="ai-redactor-test-submit" class="button button-primary"
-                            value="<?php echo esc_attr__('Tester ce prompt', 'ai-redactor'); ?>"
-                            <?php echo (!$active_model_info['has_model'] || !$active_model_info['has_api_key']) ? 'disabled' : ''; ?>>
+                            value="<?php echo esc_attr__('Tester ce prompt', 'ai-redactor'); ?>">
                         <span id="ai-redactor-loading" class="ai-redactor-loading" style="display: none;">
                             <span class="spinner is-active"></span>
                             <span class="ai-redactor-loading-text"><?php echo esc_html__('Envoi de la requête...', 'ai-redactor'); ?></span>
                         </span>
+
+                        <?php if (!$active_model_info['has_model'] || !$active_model_info['has_api_key']): ?>
+                    <p class="ai-redactor-warning">
+                        <?php echo esc_html__('Vous devez configurer un modèle et une clé API avant de pouvoir tester un prompt.', 'ai-redactor'); ?>
                     </p>
+                <?php endif; ?>
+                </p>
                 </form>
             </div>
 
@@ -424,7 +430,7 @@ class AI_Redactor_Admin_Tester
                             ?>
                         </h2>
 
-                        <?php if (defined('AI_REDACTOR_DEBUG') && AI_REDACTOR_DEBUG && $response_time > 0): ?>
+                        <?php if (defined('AI_AGENT_DEBUG') && AI_AGENT_DEBUG && $response_time > 0): ?>
                             <span class="ai-redactor-response-time">
                                 <?php printf(esc_html__('Temps de réponse: %.2f secondes', 'ai-redactor'), $response_time); ?>
                             </span>
@@ -531,7 +537,7 @@ class AI_Redactor_Admin_Tester
         $providers_config = require dirname(dirname(__FILE__)) . '/providers-config.php';
 
         // Récupérer le modèle actif (format provider:model)
-        $active_model = get_option('ai_redactor_active_model', '');
+        $active_model = get_option('ai_agent_active_model', '');
 
         if (!empty($active_model)) {
             $parts = explode(':', $active_model);
