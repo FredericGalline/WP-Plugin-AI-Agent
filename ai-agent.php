@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Plugin Name: WP Plugin AI Agent
+ * Plugin Name: AI Agent
  * Description: A WordPress plugin that acts as an AI agent to handle prompts and responses from various AI providers.
  * Version: 1.0.0
  * Author: Frederic Galline
