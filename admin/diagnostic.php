@@ -144,8 +144,8 @@ class AI_Redactor_Admin_Diagnostic
         $start_time = microtime(true);
 
         try {
-            // Charger le gestionnaire de requêtes
-            require_once dirname(dirname(__FILE__)) . '/core/ai-request-handler.php';
+            // Charger le gestionnaire de requêtes (correction du chemin)
+            require_once dirname(dirname(__FILE__)) . '/services/ai/core/ai-request-handler.php';
 
             // Envoyer la requête
             $api_result = AI_Request_Handler::send_prompt($this->test_prompt);
@@ -185,7 +185,7 @@ class AI_Redactor_Admin_Diagnostic
      */
     private function run_tests($test_provider_id = null, $test_model_id = null)
     {
-        $providers_config = require dirname(dirname(__FILE__)) . '/providers-config.php';
+        $providers_config = require dirname(dirname(__FILE__)) . '/services/ai/providers-config.php';
         $tests_results = [];
 
         foreach ($providers_config as $provider_id => $provider_config) {
@@ -350,7 +350,7 @@ class AI_Redactor_Admin_Diagnostic
                         <div class="ai-dashboard-column side">
                             <?php
                             // Récupérer la configuration des APIs
-                            $providers_config = require dirname(dirname(__FILE__)) . '/providers-config.php';
+                            $providers_config = require dirname(dirname(__FILE__)) . '/services/ai/providers-config.php';
                             $api_status = [];
 
                             foreach ($providers_config as $provider_id => $provider) {

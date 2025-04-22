@@ -14,7 +14,7 @@
  * @depends wp_nonce_field
  * @depends current_user_can
  *
- * @css /assets/css/ai-admin-form.css
+ * @css /assets/css/admin-models-form.css
  *
  * @js /assets/js/ai-admin.js
  */
@@ -58,13 +58,6 @@ class AI_Agent_Admin_Form
             'gemini:gemini-pro'
         ];
 
-        // Enqueue des styles CSS
-        wp_enqueue_style(
-            'ai-agent-admin-form',
-            WP_PLUGIN_AI_AGENT_URL . 'assets/css/ai-admin-form.css',
-            array(),
-            WP_PLUGIN_AI_AGENT_VERSION
-        );
 
         // Ajout de jQuery en dépendance explicite
         wp_enqueue_script('jquery');

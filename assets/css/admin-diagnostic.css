@@ -1,6 +1,6 @@
 /* Styles pour la page de diagnostic AI Agent
  * Ce fichier contient les styles pour la page de diagnostic des API IA
- * Compatible avec les styles du fichier ai-admin-form.css
+ * Compatible avec les styles du fichier admin-models-form.css
  */
 
 /* Variables de couleurs, reprises du thème WP */
@@ -525,7 +525,7 @@
   }
 }
 
-/* Compatibilité avec les styles de ai-admin-form.css */
+/* Compatibilité avec les styles de admin-models-form.css */
 .ai-redactor-wrap .ai-agent-form-row {
   margin-bottom: 24px;
 }

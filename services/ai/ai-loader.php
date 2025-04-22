@@ -51,11 +51,6 @@ define('AI_REDACTOR_AI_PATH', dirname(__FILE__));
 define('AI_REDACTOR_AI_URL', plugin_dir_url(__FILE__));
 define('AI_REDACTOR_AI_ASSETS_URL', AI_REDACTOR_AI_URL . 'assets/');
 
-// Charger la page d'administration des connecteurs IA
-if (is_admin()) {
-    require_once dirname(__FILE__) . '/ui/ai-admin.php';
-}
-
 // Enregistrement du fichier rest-api.php
 require_once plugin_dir_path(__FILE__) . 'rest-api.php';
 

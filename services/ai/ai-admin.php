@@ -17,7 +17,7 @@
  * @depends AI_Agent_Admin_Tester
  * @depends AI_Agent_Admin_Diagnostic
  *
- * @css /assets/css/ai-admin-form.css
+ * @css /assets/css/admin-models-form.css
  * @css /assets/css/ai-admin-tester.css
  *
  * @js /assets/js/ai-admin.js
@@ -154,7 +154,7 @@ class AI_Agent_AI_Admin
             // Chargement des styles
             wp_enqueue_style(
                 'ai-agent-admin-form-css',
-                WP_PLUGIN_AI_AGENT_URL . 'assets/css/ai-admin-form.css',
+                WP_PLUGIN_AI_AGENT_URL . 'assets/css/admin-models-form.css',
                 array(),
                 WP_PLUGIN_AI_AGENT_VERSION
             );
@@ -216,17 +216,6 @@ class AI_Agent_AI_Admin
         require_once dirname(__FILE__) . '/ai-admin-tester.php';
         $tester = new AI_Redactor_Admin_Tester();
         $tester->render_tester_page();
-    }
-
-    /**
-     * Affiche la page de diagnostic IA
-     */
-    public function render_diagnostic_page()
-    {
-        // Inclure et instancier la classe du diagnostic IA
-        require_once dirname(__FILE__) . '/ai-admin-diagnostic.php';
-        $diagnostic = new AI_Redactor_Admin_Diagnostic(false); // Le paramètre false indique de ne pas ajouter son propre sous-menu
-        $diagnostic->render_diagnostic_page();
     }
 }
 

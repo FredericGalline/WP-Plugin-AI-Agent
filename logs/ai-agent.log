@@ -101,3 +101,521 @@
 [2025-04-21 21:36:50] [INFO] Plugin AI Agent initialisé
 [2025-04-21 21:37:51] [INFO] Plugin AI Agent initialisé
 [2025-04-21 21:39:51] [INFO] Plugin AI Agent initialisé
+[2025-04-21 21:40:51] [INFO] Plugin AI Agent initialisé
+[2025-04-21 21:42:52] [INFO] Plugin AI Agent initialisé
+[2025-04-21 21:44:24] [INFO] Plugin AI Agent initialisé
+[2025-04-21 21:44:30] [INFO] Plugin AI Agent initialisé
+[2025-04-21 21:44:30] [INFO] Plugin AI Agent initialisé
+[2025-04-21 21:44:36] [INFO] Plugin AI Agent initialisé
+[2025-04-21 21:44:37] [INFO] Plugin AI Agent initialisé
+[2025-04-21 21:44:42] [INFO] Plugin AI Agent initialisé
+[2025-04-21 21:45:15] [INFO] Plugin AI Agent initialisé
+[2025-04-21 21:45:19] [INFO] Plugin AI Agent initialisé
+[2025-04-21 21:46:19] [INFO] Plugin AI Agent initialisé
+[2025-04-21 21:47:19] [INFO] Plugin AI Agent initialisé
+[2025-04-21 21:48:19] [INFO] Plugin AI Agent initialisé
+[2025-04-21 21:49:19] [INFO] Plugin AI Agent initialisé
+[2025-04-21 21:50:19] [INFO] Plugin AI Agent initialisé
+[2025-04-21 21:51:19] [INFO] Plugin AI Agent initialisé
+[2025-04-21 21:58:35] [INFO] Plugin AI Agent initialisé
+[2025-04-22 07:15:57] [INFO] Plugin AI Agent initialisé
+[2025-04-22 07:16:58] [INFO] Plugin AI Agent initialisé
+[2025-04-22 07:18:58] [INFO] Plugin AI Agent initialisé
+[2025-04-22 07:20:59] [INFO] Plugin AI Agent initialisé
+[2025-04-22 07:22:59] [INFO] Plugin AI Agent initialisé
+[2025-04-22 07:25:00] [INFO] Plugin AI Agent initialisé
+[2025-04-22 11:06:42] [INFO] Plugin AI Agent initialisé
+[2025-04-22 11:06:45] [INFO] Plugin AI Agent initialisé
+[2025-04-22 11:06:46] [INFO] Plugin AI Agent initialisé
+[2025-04-22 11:07:46] [INFO] Plugin AI Agent initialisé
+[2025-04-22 11:08:02] [INFO] Plugin AI Agent initialisé
+[2025-04-22 11:08:16] [INFO] Plugin AI Agent initialisé
+[2025-04-22 11:08:16] [INFO] Formulaire de test soumis - Validation du nonce
+[2025-04-22 11:08:16] [INFO] Nonce validé avec succès
+[2025-04-22 11:08:16] [INFO] ========== DÉBUT TRAITEMENT TEST PROMPT ==========
+[2025-04-22 11:08:16] [INFO] Prompt soumis: decris moi marseille en 200 mots... (32 caractères)
+[2025-04-22 11:08:16] [INFO] Récupération des informations sur le modèle actif
+[2025-04-22 11:08:16] [INFO] Modèle actif: OpenAI / GPT-4.1 Mini
+[2025-04-22 11:08:16] [INFO] Configuration validée, préparation de l'envoi du prompt à AI_Request_Handler
+[2025-04-22 11:08:16] [INFO] Envoi du prompt à AI_Request_Handler::send_prompt()
+[2025-04-22 11:08:16] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 11:08:16] [INFO] Modèle actif configuré: openai:gpt-4.1-mini
+[2025-04-22 11:08:16] [INFO] Tentative d'envoi de prompt à openai:gpt-4.1-mini
+[2025-04-22 11:08:23] [INFO] Réponse reçue de AI_Request_Handler
+[2025-04-22 11:08:23] [INFO] Statut de la réponse: Succès
+[2025-04-22 11:08:23] [INFO] Traitement de la réponse réussie
+[2025-04-22 11:08:23] [INFO] ========== FIN TRAITEMENT TEST PROMPT ==========
+[2025-04-22 11:08:23] [INFO] Plugin AI Agent initialisé
+[2025-04-22 11:08:30] [INFO] Plugin AI Agent initialisé
+[2025-04-22 11:08:36] [INFO] Plugin AI Agent initialisé
+[2025-04-22 11:08:36] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 11:08:36] [INFO] Modèle actif configuré: openai:gpt-4.1
+[2025-04-22 11:08:36] [INFO] Tentative d'envoi de prompt à openai:gpt-4.1
+[2025-04-22 11:08:36] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 11:08:36] [INFO] Modèle actif configuré: openai:gpt-4.1-mini
+[2025-04-22 11:08:36] [INFO] Tentative d'envoi de prompt à openai:gpt-4.1-mini
+[2025-04-22 11:08:37] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 11:08:37] [INFO] Modèle actif configuré: openai:gpt-4.1-nano
+[2025-04-22 11:08:37] [INFO] Tentative d'envoi de prompt à openai:gpt-4.1-nano
+[2025-04-22 11:08:38] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 11:08:38] [INFO] Modèle actif configuré: openai:gpt-4o
+[2025-04-22 11:08:38] [INFO] Tentative d'envoi de prompt à openai:gpt-4o
+[2025-04-22 11:08:38] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 11:08:38] [INFO] Modèle actif configuré: openai:gpt-4o-mini
+[2025-04-22 11:08:38] [INFO] Tentative d'envoi de prompt à openai:gpt-4o-mini
+[2025-04-22 11:08:40] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 11:08:40] [INFO] Modèle actif configuré: openai:gpt-3.5-turbo
+[2025-04-22 11:08:40] [INFO] Tentative d'envoi de prompt à openai:gpt-3.5-turbo
+[2025-04-22 11:08:41] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 11:08:41] [INFO] Modèle actif configuré: anthropic:claude-3-opus-latest
+[2025-04-22 11:08:41] [INFO] Tentative d'envoi de prompt à anthropic:claude-3-opus-latest
+[2025-04-22 11:08:43] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 11:08:43] [INFO] Modèle actif configuré: anthropic:claude-3-5-haiku-latest
+[2025-04-22 11:08:43] [INFO] Tentative d'envoi de prompt à anthropic:claude-3-5-haiku-latest
+[2025-04-22 11:08:44] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 11:08:44] [INFO] Modèle actif configuré: anthropic:claude-3-7-sonnet-latest
+[2025-04-22 11:08:44] [INFO] Tentative d'envoi de prompt à anthropic:claude-3-7-sonnet-latest
+[2025-04-22 11:08:45] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 11:08:45] [INFO] Modèle actif configuré: gemini:gemini-1.5-pro-latest
+[2025-04-22 11:08:45] [INFO] Tentative d'envoi de prompt à gemini:gemini-1.5-pro-latest
+[2025-04-22 11:08:46] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 11:08:46] [INFO] Modèle actif configuré: gemini:gemini-1.5-flash-latest
+[2025-04-22 11:08:46] [INFO] Tentative d'envoi de prompt à gemini:gemini-1.5-flash-latest
+[2025-04-22 11:08:46] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 11:08:46] [INFO] Modèle actif configuré: gemini:gemini-1.5-flash-8b-latest
+[2025-04-22 11:08:46] [INFO] Tentative d'envoi de prompt à gemini:gemini-1.5-flash-8b-latest
+[2025-04-22 11:08:47] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 11:08:47] [INFO] Modèle actif configuré: grok:grok-2
+[2025-04-22 11:08:47] [INFO] Tentative d'envoi de prompt à grok:grok-2
+[2025-04-22 11:08:48] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 11:08:48] [INFO] Modèle actif configuré: grok:grok-2-latest
+[2025-04-22 11:08:48] [INFO] Tentative d'envoi de prompt à grok:grok-2-latest
+[2025-04-22 11:08:48] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 11:08:48] [INFO] Modèle actif configuré: grok:grok-3-beta
+[2025-04-22 11:08:48] [INFO] Tentative d'envoi de prompt à grok:grok-3-beta
+[2025-04-22 11:09:15] [INFO] Plugin AI Agent initialisé
+[2025-04-22 11:10:16] [INFO] Plugin AI Agent initialisé
+[2025-04-22 11:12:31] [INFO] Plugin AI Agent initialisé
+[2025-04-22 11:23:34] [INFO] Plugin AI Agent initialisé
+[2025-04-22 11:26:27] [INFO] Plugin AI Agent initialisé
+[2025-04-22 11:44:50] [INFO] Plugin AI Agent initialisé
+[2025-04-22 11:46:52] [INFO] Plugin AI Agent initialisé
+[2025-04-22 14:03:47] [INFO] Plugin AI Agent initialisé
+[2025-04-22 16:16:06] [INFO] Plugin AI Agent initialisé
+[2025-04-22 16:16:15] [INFO] Plugin AI Agent initialisé
+[2025-04-22 16:16:15] [INFO] Plugin AI Agent initialisé
+[2025-04-22 16:40:21] [INFO] Plugin AI Agent initialisé
+[2025-04-22 16:40:41] [INFO] Plugin AI Agent initialisé
+[2025-04-22 16:40:41] [INFO] Formulaire de test soumis - Validation du nonce
+[2025-04-22 16:40:41] [INFO] Nonce validé avec succès
+[2025-04-22 16:40:41] [INFO] ========== DÉBUT TRAITEMENT TEST PROMPT ==========
+[2025-04-22 16:40:41] [INFO] Prompt soumis: decris moi mareille en 200 mots... (31 caractères)
+[2025-04-22 16:40:41] [INFO] Récupération des informations sur le modèle actif
+[2025-04-22 16:40:41] [INFO] Modèle actif: OpenAI / GPT-4.1 Mini
+[2025-04-22 16:40:41] [INFO] Configuration validée, préparation de l'envoi du prompt à AI_Request_Handler
+[2025-04-22 16:40:41] [INFO] Envoi du prompt à AI_Request_Handler::send_prompt()
+[2025-04-22 16:40:41] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 16:40:41] [INFO] Modèle actif configuré: openai:gpt-4.1-mini
+[2025-04-22 16:40:41] [INFO] Tentative d'envoi de prompt à openai:gpt-4.1-mini
+[2025-04-22 16:40:50] [INFO] Réponse reçue de AI_Request_Handler
+[2025-04-22 16:40:50] [INFO] Statut de la réponse: Succès
+[2025-04-22 16:40:50] [INFO] Traitement de la réponse réussie
+[2025-04-22 16:40:50] [INFO] ========== FIN TRAITEMENT TEST PROMPT ==========
+[2025-04-22 16:41:51] [INFO] Plugin AI Agent initialisé
+[2025-04-22 16:42:51] [INFO] Plugin AI Agent initialisé
+[2025-04-22 16:43:31] [INFO] Plugin AI Agent initialisé
+[2025-04-22 16:43:41] [INFO] Plugin AI Agent initialisé
+[2025-04-22 16:43:41] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 16:43:41] [INFO] Modèle actif configuré: openai:gpt-4.1
+[2025-04-22 16:43:41] [INFO] Tentative d'envoi de prompt à openai:gpt-4.1
+[2025-04-22 16:43:41] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 16:43:41] [INFO] Modèle actif configuré: openai:gpt-4.1-mini
+[2025-04-22 16:43:41] [INFO] Tentative d'envoi de prompt à openai:gpt-4.1-mini
+[2025-04-22 16:43:43] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 16:43:43] [INFO] Modèle actif configuré: openai:gpt-4.1-nano
+[2025-04-22 16:43:43] [INFO] Tentative d'envoi de prompt à openai:gpt-4.1-nano
+[2025-04-22 16:43:43] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 16:43:43] [INFO] Modèle actif configuré: openai:gpt-4o
+[2025-04-22 16:43:43] [INFO] Tentative d'envoi de prompt à openai:gpt-4o
+[2025-04-22 16:43:44] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 16:43:44] [INFO] Modèle actif configuré: openai:gpt-4o-mini
+[2025-04-22 16:43:44] [INFO] Tentative d'envoi de prompt à openai:gpt-4o-mini
+[2025-04-22 16:43:45] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 16:43:45] [INFO] Modèle actif configuré: openai:gpt-3.5-turbo
+[2025-04-22 16:43:45] [INFO] Tentative d'envoi de prompt à openai:gpt-3.5-turbo
+[2025-04-22 16:43:46] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 16:43:46] [INFO] Modèle actif configuré: anthropic:claude-3-opus-latest
+[2025-04-22 16:43:46] [INFO] Tentative d'envoi de prompt à anthropic:claude-3-opus-latest
+[2025-04-22 16:43:48] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 16:43:48] [INFO] Modèle actif configuré: anthropic:claude-3-5-haiku-latest
+[2025-04-22 16:43:48] [INFO] Tentative d'envoi de prompt à anthropic:claude-3-5-haiku-latest
+[2025-04-22 16:43:49] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 16:43:49] [INFO] Modèle actif configuré: anthropic:claude-3-7-sonnet-latest
+[2025-04-22 16:43:49] [INFO] Tentative d'envoi de prompt à anthropic:claude-3-7-sonnet-latest
+[2025-04-22 16:43:57] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 16:43:57] [INFO] Modèle actif configuré: gemini:gemini-1.5-pro-latest
+[2025-04-22 16:43:57] [INFO] Tentative d'envoi de prompt à gemini:gemini-1.5-pro-latest
+[2025-04-22 16:44:31] [INFO] Plugin AI Agent initialisé
+[2025-04-22 16:44:57] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 16:44:57] [INFO] Modèle actif configuré: gemini:gemini-1.5-flash-latest
+[2025-04-22 16:44:57] [INFO] Tentative d'envoi de prompt à gemini:gemini-1.5-flash-latest
+[2025-04-22 16:44:59] [INFO] Plugin AI Agent initialisé
+[2025-04-22 16:45:07] [INFO] Plugin AI Agent initialisé
+[2025-04-22 16:45:07] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 16:45:07] [INFO] Modèle actif configuré: gemini:gemini-1.5-flash-8b-latest
+[2025-04-22 16:45:07] [INFO] Tentative d'envoi de prompt à gemini:gemini-1.5-flash-8b-latest
+[2025-04-22 16:45:08] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 16:45:08] [INFO] Modèle actif configuré: grok:grok-2
+[2025-04-22 16:45:08] [INFO] Tentative d'envoi de prompt à grok:grok-2
+[2025-04-22 16:45:08] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 16:45:08] [INFO] Modèle actif configuré: grok:grok-2-latest
+[2025-04-22 16:45:08] [INFO] Tentative d'envoi de prompt à grok:grok-2-latest
+[2025-04-22 16:45:09] [INFO] Plugin AI Agent initialisé
+[2025-04-22 16:45:09] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 16:45:09] [INFO] Modèle actif configuré: openai:gpt-4.1
+[2025-04-22 16:45:09] [INFO] Tentative d'envoi de prompt à openai:gpt-4.1
+[2025-04-22 16:45:09] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 16:45:09] [INFO] Modèle actif configuré: grok:grok-3-beta
+[2025-04-22 16:45:09] [INFO] Tentative d'envoi de prompt à grok:grok-3-beta
+[2025-04-22 16:45:10] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 16:45:10] [INFO] Modèle actif configuré: openai:gpt-4.1-mini
+[2025-04-22 16:45:10] [INFO] Tentative d'envoi de prompt à openai:gpt-4.1-mini
+[2025-04-22 16:45:12] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 16:45:12] [INFO] Modèle actif configuré: openai:gpt-4.1-nano
+[2025-04-22 16:45:12] [INFO] Tentative d'envoi de prompt à openai:gpt-4.1-nano
+[2025-04-22 16:45:12] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 16:45:12] [INFO] Modèle actif configuré: openai:gpt-4o
+[2025-04-22 16:45:12] [INFO] Tentative d'envoi de prompt à openai:gpt-4o
+[2025-04-22 16:45:13] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 16:45:13] [INFO] Modèle actif configuré: openai:gpt-4o-mini
+[2025-04-22 16:45:13] [INFO] Tentative d'envoi de prompt à openai:gpt-4o-mini
+[2025-04-22 16:45:13] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 16:45:13] [INFO] Modèle actif configuré: openai:gpt-3.5-turbo
+[2025-04-22 16:45:13] [INFO] Tentative d'envoi de prompt à openai:gpt-3.5-turbo
+[2025-04-22 16:45:14] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 16:45:14] [INFO] Modèle actif configuré: anthropic:claude-3-opus-latest
+[2025-04-22 16:45:14] [INFO] Tentative d'envoi de prompt à anthropic:claude-3-opus-latest
+[2025-04-22 16:49:22] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 16:49:22] [INFO] Modèle actif configuré: anthropic:claude-3-5-haiku-latest
+[2025-04-22 16:49:22] [INFO] Tentative d'envoi de prompt à anthropic:claude-3-5-haiku-latest
+[2025-04-22 16:49:23] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 16:49:23] [INFO] Modèle actif configuré: anthropic:claude-3-7-sonnet-latest
+[2025-04-22 16:49:23] [INFO] Tentative d'envoi de prompt à anthropic:claude-3-7-sonnet-latest
+[2025-04-22 16:49:24] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 16:49:24] [INFO] Modèle actif configuré: gemini:gemini-1.5-pro-latest
+[2025-04-22 16:49:24] [INFO] Tentative d'envoi de prompt à gemini:gemini-1.5-pro-latest
+[2025-04-22 16:49:24] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 16:49:24] [INFO] Modèle actif configuré: gemini:gemini-1.5-flash-latest
+[2025-04-22 16:49:24] [INFO] Tentative d'envoi de prompt à gemini:gemini-1.5-flash-latest
+[2025-04-22 16:49:25] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 16:49:25] [INFO] Modèle actif configuré: gemini:gemini-1.5-flash-8b-latest
+[2025-04-22 16:49:25] [INFO] Tentative d'envoi de prompt à gemini:gemini-1.5-flash-8b-latest
+[2025-04-22 16:49:26] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 16:49:26] [INFO] Modèle actif configuré: grok:grok-2
+[2025-04-22 16:49:26] [INFO] Tentative d'envoi de prompt à grok:grok-2
+[2025-04-22 16:49:27] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 16:49:27] [INFO] Modèle actif configuré: grok:grok-2-latest
+[2025-04-22 16:49:27] [INFO] Tentative d'envoi de prompt à grok:grok-2-latest
+[2025-04-22 16:49:28] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 16:49:28] [INFO] Modèle actif configuré: grok:grok-3-beta
+[2025-04-22 16:49:28] [INFO] Tentative d'envoi de prompt à grok:grok-3-beta
+[2025-04-22 16:49:29] [INFO] Plugin AI Agent initialisé
+[2025-04-22 16:50:29] [INFO] Plugin AI Agent initialisé
+[2025-04-22 16:51:18] [INFO] Plugin AI Agent initialisé
+[2025-04-22 16:51:27] [INFO] Plugin AI Agent initialisé
+[2025-04-22 16:52:28] [INFO] Plugin AI Agent initialisé
+[2025-04-22 16:53:28] [INFO] Plugin AI Agent initialisé
+[2025-04-22 16:54:28] [INFO] Plugin AI Agent initialisé
+[2025-04-22 16:55:28] [INFO] Plugin AI Agent initialisé
+[2025-04-22 16:56:28] [INFO] Plugin AI Agent initialisé
+[2025-04-22 16:57:28] [INFO] Plugin AI Agent initialisé
+[2025-04-22 16:58:28] [INFO] Plugin AI Agent initialisé
+[2025-04-22 16:58:50] [INFO] Plugin AI Agent initialisé
+[2025-04-22 20:48:32] [INFO] Plugin AI Agent initialisé
+[2025-04-22 20:49:33] [INFO] Plugin AI Agent initialisé
+[2025-04-22 20:51:33] [INFO] Plugin AI Agent initialisé
+[2025-04-22 20:53:34] [INFO] Plugin AI Agent initialisé
+[2025-04-22 20:55:34] [INFO] Plugin AI Agent initialisé
+[2025-04-22 20:57:35] [INFO] Plugin AI Agent initialisé
+[2025-04-22 20:58:11] [INFO] Plugin AI Agent initialisé
+[2025-04-22 20:58:11] [INFO] Plugin AI Agent initialisé
+[2025-04-22 20:58:20] [INFO] Plugin AI Agent initialisé
+[2025-04-22 20:58:23] [INFO] Plugin AI Agent initialisé
+[2025-04-22 20:59:00] [INFO] Plugin AI Agent initialisé
+[2025-04-22 20:59:51] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:01:59] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:02:00] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:02:00] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:02:02] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:02:04] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:02:08] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:02:09] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:02:11] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:03:19] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:03:20] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:04:55] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:04:56] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:04:58] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:05:00] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:05:01] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:05:02] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:05:03] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:05:11] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:05:13] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:05:14] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:05:15] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:05:17] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:05:18] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:05:31] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:05:33] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:05:34] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:05:35] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:06:34] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:07:35] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:09:35] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:10:35] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:10:36] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:10:39] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:12:57] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:13:06] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:13:56] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:14:30] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:16:57] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:18:29] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:19:03] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:19:04] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:19:05] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:19:10] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:19:12] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:19:14] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:19:16] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:19:17] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:20:17] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:21:27] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:22:27] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:22:38] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:22:41] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:22:42] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:22:43] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:22:45] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:22:48] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:23:13] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:23:14] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:23:16] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:23:20] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:23:21] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:23:51] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:23:53] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:24:47] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:24:49] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:24:51] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:24:52] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:24:53] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:25:54] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:26:23] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:26:25] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:26:27] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:26:29] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:26:30] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:27:31] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:27:48] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:27:48] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:27:50] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:27:51] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:27:53] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:27:56] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:27:57] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:29:18] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:30:19] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:32:20] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:33:33] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:33:36] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:33:38] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:33:40] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:33:41] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:33:44] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:34:43] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:35:03] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:35:05] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:35:48] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:36:19] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:36:22] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:36:24] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:36:26] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:36:27] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:36:34] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:36:54] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:36:55] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:37:17] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:37:19] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:37:23] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:38:34] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:38:57] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:38:57] [INFO] Formulaire de test soumis - Validation du nonce
+[2025-04-22 21:38:57] [INFO] Nonce validé avec succès
+[2025-04-22 21:39:20] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:40:21] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:42:22] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:43:11] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:43:12] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:43:23] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:43:23] [INFO] Formulaire de test soumis - Validation du nonce
+[2025-04-22 21:43:23] [INFO] Nonce validé avec succès
+[2025-04-22 21:43:31] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:43:49] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:43:49] [INFO] Formulaire de test soumis - Validation du nonce
+[2025-04-22 21:43:49] [INFO] Nonce validé avec succès
+[2025-04-22 21:43:51] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:44:52] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:46:52] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:48:53] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:49:18] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:49:33] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:49:34] [INFO] Formulaire de test soumis - Validation du nonce
+[2025-04-22 21:49:34] [INFO] Nonce validé avec succès
+[2025-04-22 21:49:34] [INFO] ========== DÉBUT TRAITEMENT TEST PROMPT ==========
+[2025-04-22 21:49:34] [INFO] Prompt soumis: decris moi le cours julien à marseille... (39 caractères)
+[2025-04-22 21:49:34] [INFO] Récupération des informations sur le modèle actif
+[2025-04-22 21:49:34] [INFO] Modèle actif: OpenAI / GPT-4.1 Mini
+[2025-04-22 21:49:34] [INFO] Configuration validée, préparation de l'envoi du prompt à AI_Request_Handler
+[2025-04-22 21:49:34] [INFO] Envoi du prompt à AI_Request_Handler::send_prompt()
+[2025-04-22 21:49:34] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 21:49:34] [INFO] Modèle actif configuré: openai:gpt-4.1-mini
+[2025-04-22 21:49:34] [INFO] Tentative d'envoi de prompt à openai:gpt-4.1-mini
+[2025-04-22 21:49:42] [INFO] Réponse reçue de AI_Request_Handler
+[2025-04-22 21:49:42] [INFO] Statut de la réponse: Succès
+[2025-04-22 21:49:42] [INFO] Traitement de la réponse réussie
+[2025-04-22 21:49:42] [INFO] ========== FIN TRAITEMENT TEST PROMPT ==========
+[2025-04-22 21:50:43] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:52:44] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:54:44] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:55:03] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:55:05] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:55:15] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:55:15] [INFO] Formulaire de test soumis - Validation du nonce
+[2025-04-22 21:55:15] [INFO] Nonce validé avec succès
+[2025-04-22 21:55:15] [INFO] ========== DÉBUT TRAITEMENT TEST PROMPT ==========
+[2025-04-22 21:55:15] [INFO] Prompt soumis: decris moi miramas... (18 caractères)
+[2025-04-22 21:55:15] [INFO] Récupération des informations sur le modèle actif
+[2025-04-22 21:55:15] [INFO] Modèle actif: OpenAI / GPT-4.1 Mini
+[2025-04-22 21:55:15] [INFO] Configuration validée, préparation de l'envoi du prompt à AI_Request_Handler
+[2025-04-22 21:55:15] [INFO] Envoi du prompt à AI_Request_Handler::send_prompt()
+[2025-04-22 21:55:15] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 21:55:15] [INFO] Modèle actif configuré: openai:gpt-4.1-mini
+[2025-04-22 21:55:15] [INFO] Tentative d'envoi de prompt à openai:gpt-4.1-mini
+[2025-04-22 21:55:21] [INFO] Réponse reçue de AI_Request_Handler
+[2025-04-22 21:55:21] [INFO] Statut de la réponse: Succès
+[2025-04-22 21:55:21] [INFO] Traitement de la réponse réussie
+[2025-04-22 21:55:21] [INFO] ========== FIN TRAITEMENT TEST PROMPT ==========
+[2025-04-22 21:56:21] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:57:12] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:57:48] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:57:49] [INFO] Formulaire de test soumis - Validation du nonce
+[2025-04-22 21:57:49] [INFO] Nonce validé avec succès
+[2025-04-22 21:57:49] [INFO] ========== DÉBUT TRAITEMENT TEST PROMPT ==========
+[2025-04-22 21:57:49] [INFO] Prompt soumis: dis moi une anecdote sur aix-en-provence que je ne... (62 caractères)
+[2025-04-22 21:57:49] [INFO] Récupération des informations sur le modèle actif
+[2025-04-22 21:57:49] [INFO] Modèle actif: OpenAI / GPT-4.1 Mini
+[2025-04-22 21:57:49] [INFO] Configuration validée, préparation de l'envoi du prompt à AI_Request_Handler
+[2025-04-22 21:57:49] [INFO] Envoi du prompt à AI_Request_Handler::send_prompt()
+[2025-04-22 21:57:49] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 21:57:49] [INFO] Modèle actif configuré: openai:gpt-4.1-mini
+[2025-04-22 21:57:49] [INFO] Tentative d'envoi de prompt à openai:gpt-4.1-mini
+[2025-04-22 21:57:51] [INFO] Réponse reçue de AI_Request_Handler
+[2025-04-22 21:57:51] [INFO] Statut de la réponse: Succès
+[2025-04-22 21:57:51] [INFO] Traitement de la réponse réussie
+[2025-04-22 21:57:51] [INFO] ========== FIN TRAITEMENT TEST PROMPT ==========
+[2025-04-22 21:58:52] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:59:52] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:59:54] [INFO] Plugin AI Agent initialisé
+[2025-04-22 21:59:54] [INFO] Plugin AI Agent initialisé
+[2025-04-22 22:00:22] [INFO] Plugin AI Agent initialisé
+[2025-04-22 22:00:26] [INFO] Plugin AI Agent initialisé
+[2025-04-22 22:00:37] [INFO] Plugin AI Agent initialisé
+[2025-04-22 22:00:58] [INFO] Plugin AI Agent initialisé
+[2025-04-22 22:01:27] [INFO] Plugin AI Agent initialisé
+[2025-04-22 22:01:27] [INFO] Formulaire de test soumis - Validation du nonce
+[2025-04-22 22:01:27] [INFO] Nonce validé avec succès
+[2025-04-22 22:01:27] [INFO] ========== DÉBUT TRAITEMENT TEST PROMPT ==========
+[2025-04-22 22:01:27] [INFO] Prompt soumis: resume moi l\'actualité de la journée concernant... (66 caractères)
+[2025-04-22 22:01:27] [INFO] Récupération des informations sur le modèle actif
+[2025-04-22 22:01:27] [INFO] Modèle actif: OpenAI / GPT-4.1 Mini
+[2025-04-22 22:01:27] [INFO] Configuration validée, préparation de l'envoi du prompt à AI_Request_Handler
+[2025-04-22 22:01:27] [INFO] Envoi du prompt à AI_Request_Handler::send_prompt()
+[2025-04-22 22:01:27] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 22:01:27] [INFO] Modèle actif configuré: openai:gpt-4.1-mini
+[2025-04-22 22:01:27] [INFO] Tentative d'envoi de prompt à openai:gpt-4.1-mini
+[2025-04-22 22:01:31] [INFO] Réponse reçue de AI_Request_Handler
+[2025-04-22 22:01:31] [INFO] Statut de la réponse: Succès
+[2025-04-22 22:01:31] [INFO] Traitement de la réponse réussie
+[2025-04-22 22:01:31] [INFO] ========== FIN TRAITEMENT TEST PROMPT ==========
+[2025-04-22 22:01:44] [INFO] Plugin AI Agent initialisé
+[2025-04-22 22:01:47] [INFO] Plugin AI Agent initialisé
+[2025-04-22 22:02:04] [INFO] Plugin AI Agent initialisé
+[2025-04-22 22:02:07] [INFO] Plugin AI Agent initialisé
+[2025-04-22 22:02:10] [INFO] Plugin AI Agent initialisé
+[2025-04-22 22:02:12] [INFO] Plugin AI Agent initialisé
+[2025-04-22 22:02:14] [INFO] Plugin AI Agent initialisé
+[2025-04-22 22:02:15] [INFO] Plugin AI Agent initialisé
+[2025-04-22 22:02:19] [INFO] Plugin AI Agent initialisé
+[2025-04-22 22:02:21] [INFO] Plugin AI Agent initialisé
+[2025-04-22 22:02:28] [INFO] Plugin AI Agent initialisé
+[2025-04-22 22:02:32] [INFO] Plugin AI Agent initialisé
+[2025-04-22 22:02:34] [INFO] Plugin AI Agent initialisé
+[2025-04-22 22:02:48] [INFO] Plugin AI Agent initialisé
+[2025-04-22 22:03:21] [INFO] Plugin AI Agent initialisé
+[2025-04-22 22:03:23] [INFO] Plugin AI Agent initialisé
+[2025-04-22 22:03:25] [INFO] Plugin AI Agent initialisé
+[2025-04-22 22:03:29] [INFO] Plugin AI Agent initialisé
+[2025-04-22 22:04:40] [INFO] Plugin AI Agent initialisé
+[2025-04-22 22:04:43] [INFO] Plugin AI Agent initialisé
+[2025-04-22 22:04:51] [INFO] Plugin AI Agent initialisé
+[2025-04-22 22:04:56] [INFO] Plugin AI Agent initialisé
+[2025-04-22 22:07:40] [INFO] Plugin AI Agent initialisé
+[2025-04-22 22:07:43] [INFO] Plugin AI Agent initialisé
+[2025-04-22 22:07:43] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 22:07:43] [INFO] Modèle actif configuré: openai:gpt-4.1
+[2025-04-22 22:07:43] [INFO] Tentative d'envoi de prompt à openai:gpt-4.1
+[2025-04-22 22:07:44] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 22:07:44] [INFO] Modèle actif configuré: openai:gpt-4.1-mini
+[2025-04-22 22:07:44] [INFO] Tentative d'envoi de prompt à openai:gpt-4.1-mini
+[2025-04-22 22:07:44] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 22:07:44] [INFO] Modèle actif configuré: openai:gpt-4.1-nano
+[2025-04-22 22:07:44] [INFO] Tentative d'envoi de prompt à openai:gpt-4.1-nano
+[2025-04-22 22:07:45] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 22:07:45] [INFO] Modèle actif configuré: openai:gpt-4o
+[2025-04-22 22:07:45] [INFO] Tentative d'envoi de prompt à openai:gpt-4o
+[2025-04-22 22:07:45] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 22:07:45] [INFO] Modèle actif configuré: openai:gpt-4o-mini
+[2025-04-22 22:07:45] [INFO] Tentative d'envoi de prompt à openai:gpt-4o-mini
+[2025-04-22 22:07:46] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 22:07:46] [INFO] Modèle actif configuré: openai:gpt-3.5-turbo
+[2025-04-22 22:07:46] [INFO] Tentative d'envoi de prompt à openai:gpt-3.5-turbo
+[2025-04-22 22:07:47] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 22:07:47] [INFO] Modèle actif configuré: anthropic:claude-3-opus-latest
+[2025-04-22 22:07:47] [INFO] Tentative d'envoi de prompt à anthropic:claude-3-opus-latest
+[2025-04-22 22:07:48] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 22:07:48] [INFO] Modèle actif configuré: anthropic:claude-3-5-haiku-latest
+[2025-04-22 22:07:48] [INFO] Tentative d'envoi de prompt à anthropic:claude-3-5-haiku-latest
+[2025-04-22 22:07:49] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 22:07:49] [INFO] Modèle actif configuré: anthropic:claude-3-7-sonnet-latest
+[2025-04-22 22:07:49] [INFO] Tentative d'envoi de prompt à anthropic:claude-3-7-sonnet-latest
+[2025-04-22 22:07:50] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 22:07:50] [INFO] Modèle actif configuré: gemini:gemini-1.5-pro-latest
+[2025-04-22 22:07:50] [INFO] Tentative d'envoi de prompt à gemini:gemini-1.5-pro-latest
+[2025-04-22 22:07:51] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 22:07:51] [INFO] Modèle actif configuré: gemini:gemini-1.5-flash-latest
+[2025-04-22 22:07:51] [INFO] Tentative d'envoi de prompt à gemini:gemini-1.5-flash-latest
+[2025-04-22 22:07:51] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 22:07:51] [INFO] Modèle actif configuré: gemini:gemini-1.5-flash-8b-latest
+[2025-04-22 22:07:51] [INFO] Tentative d'envoi de prompt à gemini:gemini-1.5-flash-8b-latest
+[2025-04-22 22:07:52] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 22:07:52] [INFO] Modèle actif configuré: grok:grok-2
+[2025-04-22 22:07:52] [INFO] Tentative d'envoi de prompt à grok:grok-2
+[2025-04-22 22:07:52] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 22:07:52] [INFO] Modèle actif configuré: grok:grok-2-latest
+[2025-04-22 22:07:52] [INFO] Tentative d'envoi de prompt à grok:grok-2-latest
+[2025-04-22 22:07:53] [INFO] *** DÉBUT DE LA REQUÊTE ***
+[2025-04-22 22:07:53] [INFO] Modèle actif configuré: grok:grok-3-beta
+[2025-04-22 22:07:53] [INFO] Tentative d'envoi de prompt à grok:grok-3-beta
+[2025-04-22 22:08:19] [INFO] Plugin AI Agent initialisé

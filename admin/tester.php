@@ -113,8 +113,8 @@ class AI_Redactor_Admin_Tester
             $prompt = sanitize_textarea_field($_POST['test_prompt']);
 
             if (!empty($prompt)) {
-                // Inclure le gestionnaire de requêtes
-                require_once dirname(dirname(__FILE__)) . '/core/ai-request-handler.php';
+                // Inclure le gestionnaire de requêtes (correction du chemin)
+                require_once dirname(dirname(__FILE__)) . '/services/ai/core/ai-request-handler.php';
 
                 ai_agent_log('========== DÉBUT TRAITEMENT TEST PROMPT ==========', 'info');
                 ai_agent_log('Prompt soumis: ' . substr($prompt, 0, 50) . '... (' . strlen($prompt) . ' caractères)', 'info');
@@ -149,16 +149,33 @@ class AI_Redactor_Admin_Tester
 
                     ai_agent_log('Configuration validée, préparation de l\'envoi du prompt à AI_Request_Handler', 'info');
 
-                    // Envoyer la requête via le gestionnaire central
+                    // Envoi du prompt via AI_Request_Handler, la méthode centrale recommandée dans la documentation
                     ai_agent_log('Envoi du prompt à AI_Request_Handler::send_prompt()', 'info');
                     $result = AI_Request_Handler::send_prompt($prompt);
 
                     ai_agent_log('Réponse reçue de AI_Request_Handler', 'info');
                     ai_agent_log('Statut de la réponse: ' . ($result['success'] ? 'Succès' : 'Échec'), 'info');
 
+                    // Journaliser des informations supplémentaires sur la réponse
                     if (isset($result['response'])) {
                         ai_agent_log('Longueur de la réponse: ' . strlen($result['response']) . ' caractères', 'debug');
                         ai_agent_log('Extrait de la réponse: ' . substr($result['response'], 0, 100) . '...', 'debug');
+                    }
+
+                    // Vérifier si des métadonnées sont disponibles (selon le fournisseur)
+                    if (isset($result['meta'])) {
+                        ai_agent_log('Métadonnées reçues: ' . json_encode($result['meta']), 'debug');
+
+                        // Pour OpenAI, journaliser l'utilisation des tokens
+                        if (isset($result['meta']['usage'])) {
+                            $usage = $result['meta']['usage'];
+                            ai_agent_log(
+                                'Tokens utilisés: ' .
+                                    ($usage['prompt_tokens'] ?? 0) . ' (prompt) + ' .
+                                    ($usage['completion_tokens'] ?? 0) . ' (réponse)',
+                                'info'
+                            );
+                        }
                     }
 
                     if (isset($result['error']) && !empty($result['error'])) {
@@ -236,8 +253,8 @@ class AI_Redactor_Admin_Tester
         // Obtenir les informations sur le modèle actif
         $active_model_info = $this->get_active_model_info();
 
-        // Obtenir la configuration des fournisseurs
-        $providers_config = require dirname(dirname(__FILE__)) . '/providers-config.php';
+        // Obtenir la configuration des fournisseurs (correction du chemin)
+        $providers_config = require dirname(dirname(__FILE__)) . '/services/ai/providers-config.php';
 
         // Afficher l'interface
 ?>
@@ -657,8 +674,8 @@ class AI_Redactor_Admin_Tester
             'has_api_key'   => false
         );
 
-        // Récupérer la configuration des fournisseurs
-        $providers_config = require dirname(dirname(__FILE__)) . '/providers-config.php';
+        // Récupérer la configuration des fournisseurs (correction du chemin)
+        $providers_config = require dirname(dirname(__FILE__)) . '/services/ai/providers-config.php';
 
         // Récupérer le modèle actif (format provider:model)
         $active_model = get_option('ai_agent_active_model', '');

@@ -11,3 +11,4 @@ if (!defined('ABSPATH')) {
 
 // Include the admin menu file
 require_once WP_PLUGIN_AI_AGENT_PATH . 'includes/admin-menu.php';
+require_once WP_PLUGIN_AI_AGENT_PATH . 'includes/admin-enqueue.php';

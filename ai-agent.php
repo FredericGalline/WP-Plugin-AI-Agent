@@ -94,6 +94,19 @@ function ai_agent_get_debug_mode()
     return defined('AI_AGENT_DEBUG') && AI_AGENT_DEBUG === true;
 }
 
+// Fonction pour charger correctement les traductions
+function ai_agent_load_textdomain()
+{
+    load_plugin_textdomain('ai-agent', false, dirname(plugin_basename(__FILE__)) . '/languages');
+}
+add_action('init', 'ai_agent_load_textdomain');
+
 // Include the AI loader file
 require_once plugin_dir_path(__FILE__) . 'includes/loader.php';
 require_once plugin_dir_path(__FILE__) . 'services/ai/ai-loader.php';
+
+require_once plugin_dir_path(__FILE__) . 'admin/diagnostic.php';
+require_once plugin_dir_path(__FILE__) . 'admin/models-form.php';
+require_once plugin_dir_path(__FILE__) . 'admin/tester.php';
+require_once plugin_dir_path(__FILE__) . 'admin/diagnostic.php';
+require_once plugin_dir_path(__FILE__) . 'admin/diagnostic.php';
