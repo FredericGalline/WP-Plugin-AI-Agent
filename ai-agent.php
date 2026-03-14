@@ -104,6 +104,7 @@ add_action('init', 'ai_agent_load_textdomain');
 // Include the AI loader file
 require_once plugin_dir_path(__FILE__) . 'includes/loader.php';
 require_once plugin_dir_path(__FILE__) . 'services/ai/ai-loader.php';
+require_once plugin_dir_path(__FILE__) . 'includes/class-ai-agent-api.php';
 
 require_once plugin_dir_path(__FILE__) . 'admin/diagnostic.php';
 require_once plugin_dir_path(__FILE__) . 'admin/models-form.php';
