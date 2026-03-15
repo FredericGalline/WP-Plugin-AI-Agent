@@ -44,7 +44,7 @@ class AI_Mistral_API
     public static function send_request($prompt, $model, $api_key)
     {
         // Utiliser la fonction de journalisation au lieu de error_log avec vérification de constante
-        ai_agent_log("Envoi d'une requête à Mistral. Modèle : $model", 'debug');
+        ai_connector_log("Envoi d'une requête à Mistral. Modèle : $model", 'debug');
 
         $api_url = 'https://api.mistral.ai/v1/chat/completions';
 
@@ -83,11 +83,21 @@ class AI_Mistral_API
         $body = wp_remote_retrieve_body($response);
         $data = json_decode($body, true);
 
-        if ($code !== 200) {
-            $error_message = $data['error']['message'] ?? "Erreur inconnue (code $code)";
+        if (!is_array($data)) {
             return [
                 'success' => false,
-                'response' => $data,
+                'response' => null,
+                'error' => 'Réponse JSON invalide de l\'API'
+            ];
+        }
+
+        if ($code !== 200) {
+            $error_message = isset($data['error']['message'])
+                ? $data['error']['message']
+                : "Erreur inconnue (code $code)";
+            return [
+                'success' => false,
+                'response' => null,
                 'error' => 'Erreur API : ' . $error_message
             ];
         }
@@ -99,7 +109,7 @@ class AI_Mistral_API
         } else {
             return [
                 'success' => false,
-                'response' => $data,
+                'response' => null,
                 'error' => 'Format de réponse inattendu'
             ];
         }

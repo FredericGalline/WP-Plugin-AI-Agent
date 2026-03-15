@@ -44,10 +44,15 @@ class AI_OpenAI_API
     public static function send_request($prompt, $model, $api_key)
     {
         if (defined('AI_AGENT_DEBUG') && AI_AGENT_DEBUG) {
-            ai_agent_log('Configuration de la requête OpenAI - Modèle: ' . $model, 'debug');
+            ai_connector_log('Configuration de la requête OpenAI - Modèle: ' . $model, 'debug');
         }
 
         $api_url = 'https://api.openai.com/v1/chat/completions';
+
+        // Les modèles récents OpenAI (o1, o3, gpt-4.1, etc.) utilisent
+        // max_completion_tokens au lieu de max_tokens
+        $uses_completion_tokens = preg_match('/^(o[0-9]|gpt-4\.1|gpt-4o|gpt-5|chatgpt-4o)/', $model);
+        $token_limit = 16384;
 
         $request_body = [
             'model' => $model,
@@ -57,9 +62,14 @@ class AI_OpenAI_API
                     'content' => $prompt
                 ]
             ],
-            'temperature' => 0.7,
-            'max_tokens' => 2048
         ];
+
+        if ($uses_completion_tokens) {
+            $request_body['max_completion_tokens'] = $token_limit;
+        } else {
+            $request_body['temperature'] = 0.7;
+            $request_body['max_tokens'] = $token_limit;
+        }
 
         $args = [
             'timeout' => 60,
@@ -84,11 +94,21 @@ class AI_OpenAI_API
         $body = wp_remote_retrieve_body($response);
         $data = json_decode($body, true);
 
-        if ($code !== 200) {
-            $error_message = $data['error']['message'] ?? "Erreur inconnue (code $code)";
+        if (!is_array($data)) {
             return [
                 'success' => false,
-                'response' => $data,
+                'response' => null,
+                'error' => 'Réponse JSON invalide de l\'API'
+            ];
+        }
+
+        if ($code !== 200) {
+            $error_message = isset($data['error']['message'])
+                ? $data['error']['message']
+                : "Erreur inconnue (code $code)";
+            return [
+                'success' => false,
+                'response' => null,
                 'error' => 'Erreur API: ' . $error_message
             ];
         }
@@ -103,7 +123,7 @@ class AI_OpenAI_API
 
         return [
             'success' => false,
-            'response' => $data,
+            'response' => null,
             'error' => 'Format de réponse inattendu'
         ];
     }

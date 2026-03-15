@@ -1,31 +1,34 @@
-.ai-agent-vertical-tabs {
+.ai-connector-vertical-tabs {
   display: flex;
   flex-direction: row;
   width: 100%;
+  min-height: 560px;
   margin: 20px 0;
   background: #fff;
-  border-radius: 4px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #ccd0d4;
+  border-radius: 6px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
   overflow: hidden;
 }
 
-.ai-agent-tabs-sidebar {
-  width: 220px;
+.ai-connector-tabs-sidebar {
+  width: 300px;
   background: #f8f9fa;
   border-right: 1px solid #e2e4e7;
+  flex-shrink: 0;
 }
 
-.ai-agent-tabs-nav {
+.ai-connector-tabs-nav {
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-.ai-agent-tabs-nav li {
+.ai-connector-tabs-nav li {
   margin: 0;
 }
 
-.ai-agent-tabs-nav a {
+.ai-connector-tabs-nav a {
   display: flex;
   align-items: center;
   padding: 12px 16px;
@@ -35,39 +38,44 @@
   transition: all 0.2s ease;
 }
 
-.ai-agent-tabs-nav a:hover {
+.ai-connector-tabs-nav a:hover {
   background: #f0f0f1;
 }
 
-.ai-agent-tabs-nav a.active {
+.ai-connector-tabs-nav a.active {
   background: #fff;
   border-left: 3px solid #2271b1;
   color: #2271b1;
   font-weight: 500;
 }
 
-.ai-agent-tab-icon {
-  display: flex;
+.ai-connector-tab-icon {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 30px;
   height: 30px;
   margin-right: 12px;
+  flex-shrink: 0;
 }
 
-.ai-agent-provider-svg {
-  max-width: 24px;
-  max-height: 24px;
+.ai-connector-provider-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
 }
 
-.ai-agent-tab-text {
+.ai-connector-tab-text {
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-.ai-agent-tab-badge {
+.ai-connector-tab-badge {
   font-size: 11px;
   font-weight: 600;
   color: #fff;
@@ -78,26 +86,26 @@
 }
 
 /* Content area styles */
-.ai-agent-tabs-content-wrapper {
+.ai-connector-tabs-content-wrapper {
   flex: 1;
   padding: 0;
   background: #fff;
 }
 
-.ai-agent-tabs-content {
+.ai-connector-tabs-content {
   padding: 20px;
 }
 
-.ai-agent-tab-content {
+.ai-connector-tab-content {
   display: none;
 }
 
-.ai-agent-tab-content.active {
+.ai-connector-tab-content.active {
   display: block;
 }
 
 /* Provider header */
-.ai-agent-tab-content h2 {
+.ai-connector-tab-content h2 {
   display: flex;
   align-items: center;
   margin-top: 0;
@@ -107,18 +115,35 @@
   padding-bottom: 12px;
 }
 
-.ai-agent-provider-icon {
-  display: flex;
+.ai-connector-provider-icon {
+  display: inline-flex;
   align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
   margin-right: 12px;
+  flex-shrink: 0;
 }
 
-.ai-agent-header-svg {
-  max-width: 28px;
-  max-height: 28px;
+.ai-connector-header-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
 }
 
-.ai-agent-provider-badge {
+.ai-connector-provider-fallback {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  color: #50575e;
+  font-size: 20px;
+  line-height: 1;
+}
+
+.ai-connector-provider-badge {
   margin-left: 12px;
   font-size: 12px;
   font-weight: 500;
@@ -126,43 +151,43 @@
   border-radius: 3px;
 }
 
-.ai-agent-provider-badge.active {
+.ai-connector-provider-badge.active {
   background: #d1f0c2;
   color: #2a6f17;
 }
 
-.ai-agent-provider-badge.inactive {
+.ai-connector-provider-badge.inactive {
   background: #f0f0f1;
   color: #50575e;
 }
 
 /* Form rows and inputs */
-.ai-agent-form-row {
+.ai-connector-form-row {
   margin-bottom: 24px;
 }
 
-.ai-agent-form-row label {
+.ai-connector-form-row label {
   display: block;
   margin-bottom: 6px;
   font-weight: 500;
 }
 
-.ai-agent-form-row .description {
+.ai-connector-form-row .description {
   margin-bottom: 8px;
   color: #646970;
 }
 
-.ai-agent-api-key-input {
+.ai-connector-api-key-input {
   display: flex;
   position: relative;
 }
 
-.ai-agent-api-key-input input {
+.ai-connector-api-key-input input {
   flex: 1;
   padding-right: 40px;
 }
 
-.ai-agent-toggle-api-key {
+.ai-connector-toggle-api-key {
   position: absolute !important;
   right: 1px;
   top: 1px;
@@ -173,46 +198,46 @@
 }
 
 /* Model selection */
-.ai-agent-models-list {
+.ai-connector-models-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 16px;
   margin-top: 16px;
 }
 
-.ai-agent-model-option {
+.ai-connector-model-option {
   border: 1px solid #e2e4e7;
   border-radius: 4px;
   padding: 16px;
   transition: all 0.2s ease;
 }
 
-.ai-agent-model-option:hover {
+.ai-connector-model-option:hover {
   border-color: #c3c4c7;
   background: #f9f9f9;
 }
 
-.ai-agent-model-option.selected {
+.ai-connector-model-option.selected {
   border-color: #2271b1;
   background: #f0f7fb;
 }
 
-.ai-agent-model-header {
+.ai-connector-model-header {
   display: flex;
   align-items: center;
   margin-bottom: 8px;
 }
 
-.ai-agent-model-radio {
+.ai-connector-model-radio {
   margin-right: 8px !important;
 }
 
-.ai-agent-model-name {
+.ai-connector-model-name {
   font-weight: 500;
   flex: 1;
 }
 
-.ai-agent-model-badge {
+.ai-connector-model-badge {
   font-size: 11px;
   font-weight: 500;
   padding: 2px 6px;
@@ -220,23 +245,23 @@
   margin-left: 8px;
 }
 
-.ai-agent-model-badge.active {
+.ai-connector-model-badge.active {
   background: #d1f0c2;
   color: #2a6f17;
 }
 
-.ai-agent-model-badge.popular {
+.ai-connector-model-badge.popular {
   background: #f0e6d1;
   color: #8a6d3b;
 }
 
-.ai-agent-model-description {
+.ai-connector-model-description {
   margin-bottom: 12px;
   color: #646970;
   font-size: 13px;
 }
 
-.ai-agent-model-details {
+.ai-connector-model-details {
   display: flex;
   font-size: 12px;
   color: #646970;
@@ -244,12 +269,12 @@
   padding-top: 8px;
 }
 
-.ai-agent-model-detail-item {
+.ai-connector-model-detail-item {
   margin-right: 16px;
 }
 
 /* Test connection button */
-.ai-agent-test-connection {
+.ai-connector-test-connection {
   display: inline-flex;
   align-items: center;
   padding: 6px 12px;
@@ -261,27 +286,39 @@
   transition: all 0.2s ease;
 }
 
-.ai-agent-test-connection:hover {
+.ai-connector-test-connection:hover {
   background: #e5e5e5;
 }
 
-.ai-agent-test-connection .dashicons {
+.ai-connector-test-connection .dashicons {
   margin-right: 6px;
 }
 
-.ai-agent-connection-status {
+.ai-connector-connection-status {
   margin-left: 12px;
   font-size: 13px;
 }
 
-.ai-agent-connection-status.success {
+.ai-connector-connection-status.success {
   color: #2a6f17;
 }
 
-.ai-agent-connection-status.error {
+.ai-connector-connection-status.error {
   color: #d63638;
 }
 
-.ai-agent-connection-status.testing {
+.ai-connector-connection-status.testing {
   color: #8a6d3b;
+}
+
+@media screen and (max-width: 960px) {
+  .ai-connector-vertical-tabs {
+    flex-direction: column;
+  }
+
+  .ai-connector-tabs-sidebar {
+    width: 100%;
+    border-right: 0;
+    border-bottom: 1px solid #e2e4e7;
+  }
 }

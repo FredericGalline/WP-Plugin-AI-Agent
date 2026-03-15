@@ -1,0 +1,22 @@
+{
+    "name": "fredericgalline/ai-connector",
+    "description": "Connecteur IA transverse pour WordPress avec API publique, gestion des fournisseurs et outils de diagnostic",
+    "type": "wordpress-plugin",
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "Frédéric Galliné",
+            "email": "contact@ubeez.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.4",
+        "yahnis-elsts/plugin-update-checker": "^5.6"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.0"
+    },
+    "scripts": {
+        "test": "phpunit"
+    }
+}

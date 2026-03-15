@@ -1,0 +1,351 @@
+/**
+ * Styles communs pour toutes les pages d'administration du plugin AI Connector
+ *
+ * Ce fichier contient les styles partagés entre toutes les interfaces
+ * d'administration du plugin, permettant une expérience visuelle cohérente
+ * et facilitant la maintenance.
+ */
+
+:root {
+  /* Palette de couleurs principale */
+  --ai-primary: #2271b1; /* Bleu WordPress principal */
+  --ai-primary-dark: #135e96; /* Bleu foncé pour hover */
+  --ai-primary-light: #e6f0f8; /* Bleu très clair pour backgrounds */
+  --ai-secondary: #3c434a; /* Gris foncé */
+  --ai-accent: #5f43b2; /* Violet accent - pour IA/ML */
+  --ai-success: #46b450; /* Vert succès */
+  --ai-warning: #dba617; /* Orange avertissement */
+  --ai-error: #d63638; /* Rouge erreur */
+  --ai-background: #f0f0f1; /* Gris clair fond WP */
+  --ai-text: #1d2327; /* Couleur texte principale */
+  --ai-text-light: #646970; /* Couleur texte secondaire */
+  --ai-border: #c3c4c7; /* Couleur bordure standard */
+  --ai-border-light: #e0e0e0; /* Couleur bordure légère */
+  --ai-card-bg: #ffffff; /* Fond blanc pour cartes */
+
+  /* Espacement */
+  --ai-spacing-xs: 4px;
+  --ai-spacing-sm: 8px;
+  --ai-spacing-md: 16px;
+  --ai-spacing-lg: 24px;
+  --ai-spacing-xl: 32px;
+
+  /* Typographie */
+  --ai-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  --ai-font-size-small: 13px;
+  --ai-font-size-normal: 14px;
+  --ai-font-size-medium: 16px;
+  --ai-font-size-large: 18px;
+  --ai-font-size-xlarge: 24px;
+
+  /* Effets */
+  --ai-transition: all 0.2s ease;
+  --ai-box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  --ai-box-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --ai-border-radius: 8px;
+  --ai-border-radius-sm: 4px;
+}
+
+/* Reset et base */
+.ai-connector-wrap {
+  font-family: var(--ai-font-family);
+  color: var(--ai-text);
+  max-width: 1200px;
+  margin: 20px 0;
+}
+
+.ai-connector-wrap * {
+  box-sizing: border-box;
+}
+
+/* Structure de page commune */
+.ai-connector-header {
+  margin-bottom: var(--ai-spacing-lg);
+}
+
+.ai-connector-header h1 {
+  margin-top: 0;
+  margin-bottom: var(--ai-spacing-xs);
+  font-size: var(--ai-font-size-xlarge);
+  font-weight: 600;
+  color: var(--ai-text);
+}
+
+.ai-connector-header p {
+  margin-top: 0;
+  font-size: var(--ai-font-size-medium);
+  color: var(--ai-text-light);
+}
+
+/* Cards */
+.ai-connector-card {
+  background-color: var(--ai-card-bg);
+  border: 1px solid var(--ai-border-light);
+  border-radius: var(--ai-border-radius);
+  box-shadow: var(--ai-box-shadow);
+  margin-bottom: var(--ai-spacing-lg);
+  overflow: hidden;
+  transition: var(--ai-transition);
+  position: relative;
+  break-inside: avoid;
+  display: flex;
+  flex-direction: column;
+}
+
+.ai-connector-card:hover {
+  box-shadow: var(--ai-box-shadow-hover);
+}
+
+.ai-connector-card-header {
+  background-color: #f9f9f9;
+  border-bottom: 1px solid var(--ai-border-light);
+  padding: var(--ai-spacing-md) var(--ai-spacing-lg);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ai-connector-card-header h2 {
+  margin: 0;
+  font-size: var(--ai-font-size-medium);
+  font-weight: 600;
+  color: var(--ai-text);
+  display: flex;
+  align-items: center;
+}
+
+.ai-connector-card-header h2 .dashicons,
+.ai-connector-card-header h2::before {
+  margin-right: var(--ai-spacing-xs);
+  color: var(--ai-primary);
+}
+
+.ai-connector-card-content {
+  padding: var(--ai-spacing-lg);
+}
+
+.ai-connector-card-footer {
+  padding: var(--ai-spacing-md) var(--ai-spacing-lg);
+  border-top: 1px solid var(--ai-border-light);
+  background-color: #f9f9f9;
+}
+
+/* Grilles et disposition */
+.ai-connector-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--ai-spacing-lg);
+  margin-bottom: var(--ai-spacing-xl);
+}
+
+.ai-connector-columns {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 -var(--ai-spacing-md);
+}
+
+.ai-connector-column {
+  flex: 1;
+  padding: 0 var(--ai-spacing-md);
+  min-width: 300px;
+}
+
+/* Formulaires */
+.ai-connector-form-row {
+  margin-bottom: var(--ai-spacing-lg);
+}
+
+.ai-connector-form-row label {
+  display: block;
+  margin-bottom: var(--ai-spacing-xs);
+  font-weight: 500;
+  color: var(--ai-text);
+}
+
+.ai-connector-form-row input[type="text"],
+.ai-connector-form-row input[type="password"],
+.ai-connector-form-row input[type="email"],
+.ai-connector-form-row select,
+.ai-connector-form-row textarea {
+  width: 100%;
+  padding: var(--ai-spacing-sm) var(--ai-spacing-md);
+  border: 1px solid var(--ai-border);
+  border-radius: var(--ai-border-radius-sm);
+  font-size: var(--ai-font-size-normal);
+  transition: var(--ai-transition);
+}
+
+.ai-connector-form-row input[type="text"]:focus,
+.ai-connector-form-row input[type="password"]:focus,
+.ai-connector-form-row input[type="email"]:focus,
+.ai-connector-form-row select:focus,
+.ai-connector-form-row textarea:focus {
+  border-color: var(--ai-primary);
+  box-shadow: 0 0 0 1px var(--ai-primary);
+  outline: none;
+}
+
+.ai-connector-form-row .description {
+  margin-top: var(--ai-spacing-xs);
+  font-size: var(--ai-font-size-small);
+  color: var(--ai-text-light);
+}
+
+/* Boutons */
+.ai-connector-button {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--ai-spacing-sm) var(--ai-spacing-md);
+  border-radius: var(--ai-border-radius-sm);
+  font-size: var(--ai-font-size-normal);
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: var(--ai-transition);
+}
+
+.ai-connector-button-primary {
+  background-color: var(--ai-primary);
+  color: white;
+  border: 1px solid var(--ai-primary-dark);
+}
+
+.ai-connector-button-primary:hover {
+  background-color: var(--ai-primary-dark);
+}
+
+.ai-connector-button-secondary {
+  background-color: transparent;
+  color: var(--ai-primary);
+  border: 1px solid var(--ai-primary);
+}
+
+.ai-connector-button-secondary:hover {
+  background-color: var(--ai-primary-light);
+}
+
+/* États et badges */
+.ai-connector-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--ai-spacing-xs) var(--ai-spacing-md);
+  border-radius: 12px;
+  font-size: var(--ai-font-size-small);
+  font-weight: 500;
+}
+
+.ai-connector-badge-success {
+  background-color: rgba(70, 180, 80, 0.1);
+  color: var(--ai-success);
+}
+
+.ai-connector-badge-warning {
+  background-color: rgba(219, 166, 23, 0.1);
+  color: var(--ai-warning);
+}
+
+.ai-connector-badge-error {
+  background-color: rgba(214, 54, 56, 0.1);
+  color: var(--ai-error);
+}
+
+/* Notifications et messages */
+.ai-connector-notice {
+  padding: var(--ai-spacing-md);
+  margin-bottom: var(--ai-spacing-lg);
+  border-radius: var(--ai-border-radius-sm);
+  border-left: 4px solid transparent;
+}
+
+.ai-connector-notice-info {
+  background-color: var(--ai-primary-light);
+  border-left-color: var(--ai-primary);
+}
+
+.ai-connector-notice-success {
+  background-color: rgba(70, 180, 80, 0.1);
+  border-left-color: var(--ai-success);
+}
+
+.ai-connector-notice-warning {
+  background-color: rgba(219, 166, 23, 0.1);
+  border-left-color: var(--ai-warning);
+}
+
+.ai-connector-notice-error {
+  background-color: rgba(214, 54, 56, 0.1);
+  border-left-color: var(--ai-error);
+}
+
+/* Loading/Spinners */
+.ai-connector-loading {
+  display: flex;
+  align-items: center;
+  gap: var(--ai-spacing-md);
+  margin: var(--ai-spacing-md) 0;
+}
+
+.ai-connector-loading .spinner {
+  float: none;
+  visibility: visible;
+  margin: 0;
+}
+
+.ai-connector-loading-text {
+  color: var(--ai-text-light);
+}
+
+/* Tableaux */
+.ai-connector-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-bottom: var(--ai-spacing-lg);
+  border: 1px solid var(--ai-border-light);
+  border-radius: var(--ai-border-radius);
+  overflow: hidden;
+}
+
+.ai-connector-table th,
+.ai-connector-table td {
+  padding: var(--ai-spacing-md);
+  text-align: left;
+  border-bottom: 1px solid var(--ai-border-light);
+}
+
+.ai-connector-table th {
+  background-color: #f5f5f5;
+  font-weight: 600;
+  color: var(--ai-text);
+}
+
+.ai-connector-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* Responsive */
+@media (max-width: 782px) {
+  .ai-connector-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ai-connector-columns {
+    flex-direction: column;
+  }
+
+  .ai-connector-column {
+    width: 100%;
+    padding: 0;
+    margin-bottom: var(--ai-spacing-lg);
+  }
+
+  .ai-connector-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .ai-connector-card-header h2 {
+    margin-bottom: var(--ai-spacing-sm);
+  }
+}

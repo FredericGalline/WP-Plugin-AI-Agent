@@ -1,357 +1,160 @@
-# AI Redactor - Documentation technique
+# AI Connector - Guide de maintenance
 
-Ce fichier documente l'architecture et le fonctionnement du plugin **AI Redactor**, en particulier le système de requêtage vers les différentes API d'intelligence artificielle.
+Cette documentation est la reference technique pour maintenir le plugin `AI Connector`.
 
-## ✨ Objectif
+## But du plugin
 
-Permettre à un développeur de comprendre rapidement comment sont gérées les requêtes vers les IA, comment ajouter un nouveau fournisseur, et comment diagnostiquer une erreur.
+`AI Connector` centralise tout ce qui est transverse aux integrations IA:
+- fournisseurs
+- cles API
+- catalogue de modeles
+- modele actif
+- facade PHP
+- REST API externe
+- logs, testeur et diagnostic
 
----
+Le plugin ne doit pas contenir de logique metier editoriale.
 
-## ⌚ Arborescence concernée
+## Architecture reelle
 
+```text
+ai-connector.php
+includes/
+  ai-connector-functions.php
+  class-ai-connector-api.php
+  class-ai-connector-logger.php
+  loader.php
+  admin-menu.php
+  admin-enqueue.php
+services/ai/
+  ai-loader.php
+  providers-config.php
+  rest-api.php
+  api/
+    OpenAI.php
+    Anthropic.php
+    Gemini.php
+    Mistral.php
+    Grok.php
+  core/
+    ai-request-handler.php
+    ai-admin-form-handler.php
+    ai-admin-ajax.php
+admin/
+  dashboard.php
+  models-form.php
+  tester.php
+  diagnostic.php
+logs/
+  ai-connector.log
 ```
-/ai
-├── ai-loader.php
-├── core/
-│   └── ai-request-handler.php      ➔ Point d'entrée central des requêtes IA
-├── api/
-│   ├── OpenAI.php               ➔ Classe AI_OpenAI_API
-│   ├── Anthropic.php           ➔ Classe AI_Anthropic_API
-│   ├── Gemini.php              ➔ Classe AI_Gemini_API
-│   ├── Mistral.php             ➔ Classe AI_Mistral_API
-│   └── Grok.php                ➔ Classe AI_Grok_API
-├── providers-config.php           ➔ Configuration des fournisseurs et modèles
-├── ui/
-│   └── ai-admin-tester.php      ➔ Interface admin pour tester un prompt
-├── diagnostic.php                 ➔ Outil de diagnostic manuel complet
+
+## Sequence de chargement
+
+1. `ai-connector.php`
+   - declare les constantes
+   - initialise le logger
+   - charge les helpers transverses
+   - charge le bootstrap, les services IA et la facade publique
+2. `includes/loader.php`
+   - charge les menus admin
+   - bootstrap les handlers du formulaire et de l'AJAX admin
+3. `services/ai/ai-loader.php`
+   - enregistre la REST API
+   - enregistre les assets lies au service IA
+4. `includes/class-ai-connector-api.php`
+   - expose `AI_Connector_API`
+5. `services/ai/core/ai-request-handler.php`
+   - choisit le fournisseur et le modele
+   - charge la classe provider adequate
+   - execute la requete
+
+## Source de verite
+
+Le catalogue de modeles n'a qu'une seule source de verite:
+
+```text
+services/ai/providers-config.php
 ```
 
----
+Les fonctions de compatibilite et de migration de modeles vivent dans:
 
-## 🛠️ Architecture
+```text
+includes/ai-connector-functions.php
+```
 
-### 1. `AI_Request_Handler` (core/ai-request-handler.php)
+Les badges de mise en avant dans l'UI vivent dans:
 
-- **Méthode principale** : `send_prompt($prompt)`
-- Elle :
-  - lit le modèle actif dans `get_option('ai_agent_active_model')` (format `provider:model`)
-  - lit la clé API correspondante dans la config
-  - délègue la requête à la classe du provider via :
+```text
+admin/models-form.php
+```
+
+## Mise a jour du catalogue de modeles
+
+Checklist maintenable:
+
+1. verifier les catalogues officiels des fournisseurs
+2. mettre a jour `services/ai/providers-config.php`
+3. si des anciens identifiants disparaissent, ajouter un alias dans `includes/ai-connector-functions.php`
+4. verifier qu'un modele actif legacy est bien remappe automatiquement
+5. mettre a jour les badges "modeles populaires" dans `admin/models-form.php`
+6. verifier les pages:
+   - `AI Connector > Connecteurs IA`
+   - `AI Connector > Testeur IA`
+   - `AI Connector > Diagnostic IA`
+7. verifier la facade PHP et la REST API
+
+Regle importante:
+- ne dupliquez pas le catalogue courant dans un plugin consommateur
+
+## Ajout d'un nouveau fournisseur
+
+1. ajouter le provider dans `services/ai/providers-config.php`
+2. ajouter la classe provider dans `services/ai/api/`
+3. declarer le mapping fichier/classe dans `services/ai/core/ai-request-handler.php`
+4. ajouter l'icone si besoin dans `assets/svg/`
+5. completer le mapping d'icones dans `admin/models-form.php` si le nom de fichier n'est pas standard
+6. tester la configuration, la route REST et la facade PHP
+
+## Compatibilite legacy
+
+Compatibilites preservees a date:
+- facade `AI_Connector_API`
+- route REST `/wp-json/ai-connector/v1/prompt`
+- constantes `WP_PLUGIN_AI_AGENT_*`
+- options legacy `ai_connector_*` et `ai_redactor_*`
+
+La compatibilite existe pour amortir la refacto. Toute nouvelle surface doit partir de `AI_Connector_API`.
+
+## Regles de maintenabilite
+
+- un seul plugin doit posseder les providers et modeles: `AI Connector`
+- un plugin metier consomme l'API, il ne reimplemente pas le transport
+- un changement de contrat public doit etre documente dans `API.md`
+- une doc historique qui n'est plus vraie doit etre remplacee par un renvoi, pas laissee en l'etat
+
+## Debug et observabilite
+
+Mode debug:
 
 ```php
-$class = 'AI_' . ucfirst($active_provider) . '_API';
-return $class::send_request($prompt, $model, $api_key);
+define('AI_CONNECTOR_DEBUG', true);
 ```
 
-- Elle gère aussi les cas d'erreur (provider inconnu, modèle non configuré, clé API manquante).
+Compatibilite legacy:
 
-### 2. Classes individuelles par provider (dossier `/api/`)
-
-Chaque classe implémente une méthode statique `send_request($prompt, $model, $api_key)` qui :
-- construit l'URL et le body spécifique à l'API
-- utilise `wp_remote_post()`
-- parse la réponse selon la structure de l'API (OpenAI, Claude, Gemini, etc.)
-- retourne un tableau associatif :
-
-```php
-[
-  'success' => true|false,
-  'response' => 'texte généré' ou tableau brut,
-  'error' => 'message si erreur'
-]
-```
-
----
-
-## 📝 Guide complet pour effectuer des requêtes IA
-
-### Configuration préalable
-
-Avant de pouvoir envoyer des requêtes, assurez-vous que :
-
-1. Un modèle d'IA est correctement configuré dans l'option `ai_agent_active_model` au format `provider:model`
-2. Une clé API valide est enregistrée dans l'option correspondante (ex: `ai_redactor_openai_api_key`)
-3. Le fournisseur et le modèle sont correctement référencés dans `providers-config.php`
-
-### Étapes pour envoyer une requête IA
-
-#### 1. Préparation du prompt
-
-```php
-// Formatez votre prompt selon vos besoins
-$prompt = "Voici un article sur [SUJET]. Peux-tu améliorer son style ?";
-$prompt .= "\n\nContenu original:\n" . $content;
-
-// Si nécessaire, ajoutez des instructions spécifiques
-$prompt .= "\n\nInstructions: Conserve le message principal, mais améliore le style et la clarté.";
-```
-
-#### 2. Envoi du prompt via le gestionnaire central
-
-```php
-// Inclure le gestionnaire de requêtes si nécessaire
-require_once PLUGIN_PATH . '/services/ai/core/ai-request-handler.php';
-
-// Mesurer le temps de réponse (optionnel)
-$start_time = microtime(true);
-
-// Envoyer la requête
-$result = AI_Request_Handler::send_prompt($prompt);
-
-// Calcul du temps de réponse (optionnel)
-$response_time = microtime(true) - $start_time;
-```
-
-#### 3. Traitement de la réponse
-
-```php
-// Vérifier si la requête a réussi
-if ($result['success']) {
-    // Accéder à la réponse générée
-    $ai_response = $result['response'];
-    
-    // Utiliser la réponse (par exemple, l'afficher ou la sauvegarder)
-    echo '<div class="ai-response">' . esc_html($ai_response) . '</div>';
-    
-    // Journaliser le succès (optionnel)
-    if (function_exists('ai_agent_log')) {
-        ai_agent_log('Requête IA réussie - Longueur: ' . strlen($ai_response) . ' caractères', 'info');
-    }
-} else {
-    // Gérer l'erreur
-    $error_message = $result['error'];
-    
-    // Afficher un message d'erreur à l'utilisateur
-    echo '<div class="ai-error">Erreur: ' . esc_html($error_message) . '</div>';
-    
-    // Journaliser l'erreur (optionnel)
-    if (function_exists('ai_agent_log')) {
-        ai_agent_log('Erreur requête IA: ' . $error_message, 'error');
-    }
-}
-```
-
-### Gestion des erreurs communes
-
-1. **Modèle non configuré** :
-   - Vérifiez que `get_option('ai_agent_active_model')` retourne une valeur au format `provider:model`
-   - Solution : configurez un modèle dans l'interface admin
-
-2. **Clé API manquante** :
-   - Vérifiez que la clé associée au fournisseur est enregistrée
-   - Solution : ajoutez la clé API dans les paramètres de connecteurs IA
-
-3. **Erreur d'API externe** :
-   - Les erreurs des fournisseurs (quotas, problèmes de réseau, etc.) sont capturées dans `$result['error']`
-   - Solution : vérifiez les limites de votre compte et la connectivité réseau
-
-4. **Timeout** :
-   - Les modèles volumineux peuvent dépasser le temps d'exécution PHP par défaut
-   - Solution : utilisez `set_time_limit(180)` avant les appels longs
-
-### Exemple de cas d'utilisation avancé
-
-```php
-// Augmenter temporairement la limite de temps d'exécution
-$original_time_limit = ini_get('max_execution_time');
-set_time_limit(180); // 3 minutes
-
-try {
-    // Envoyer la requête
-    $result = AI_Request_Handler::send_prompt($prompt);
-    
-    if ($result['success']) {
-        // Traiter la réponse réussie
-        update_post_meta($post_id, '_ai_enhanced_content', $result['response']);
-        
-        // Notifier l'utilisateur du succès
-        add_settings_error(
-            'ai_agent_processing',
-            'content_enhanced',
-            __('Contenu amélioré avec succès par l\'IA!', 'ai-agent'),
-            'success'
-        );
-    } else {
-        // Gérer l'erreur et fournir un retour détaillé
-        throw new Exception($result['error']);
-    }
-} catch (Exception $e) {
-    // Capturer toute exception
-    add_settings_error(
-        'ai_agent_processing',
-        'ai_error',
-        sprintf(__('Erreur lors du traitement IA: %s', 'ai-agent'), $e->getMessage()),
-        'error'
-    );
-    
-    // Journaliser l'erreur
-    if (function_exists('ai_agent_log')) {
-        ai_agent_log('EXCEPTION: ' . $e->getMessage(), 'error');
-    }
-} finally {
-    // Restaurer la limite de temps d'origine
-    set_time_limit($original_time_limit);
-}
-```
-
----
-
-## 📚 Exemple d'appel de prompt
-
-```php
-$response = AI_Request_Handler::send_prompt("Explique la gravitation quantique");
-
-if ($response['success']) {
-    echo $response['response'];
-} else {
-    error_log('Erreur IA : ' . $response['error']);
-}
-```
-
----
-
-## 🔍 Structure de réponse détaillée
-
-Lorsque vous appelez `AI_Request_Handler::send_prompt()`, le résultat est toujours un tableau avec cette structure :
-
-```php
-[
-    // Indique si la requête a réussi (true) ou échoué (false)
-    'success' => true|false,
-    
-    // Contient la réponse de l'IA si success est true
-    // Peut être une chaîne de caractères ou un tableau selon le fournisseur
-    'response' => 'Texte de réponse généré par l'IA...',
-    
-    // Contient un message d'erreur si success est false
-    // Peut aussi être présent avec success=true pour les avertissements
-    'error' => 'Description détaillée de l'erreur'
-]
-```
-
-### Variations par fournisseur
-
-Bien que la structure de base soit standardisée, certains fournisseurs peuvent ajouter des informations supplémentaires :
-
-- **OpenAI** : Peut inclure des métadonnées comme le nombre de tokens utilisés
-- **Anthropic** : Peut inclure des métadonnées sur le modèle utilisé
-- **Gemini** : Peut contenir des informations sur la confiance de la réponse
-
-Accédez à ces informations supplémentaires via le tableau `$result` :
-
-```php
-// Exemple avec OpenAI qui peut inclure des métadonnées
-if ($result['success'] && isset($result['meta'])) {
-    $usage = $result['meta']['usage'] ?? [];
-    $prompt_tokens = $usage['prompt_tokens'] ?? 0;
-    $completion_tokens = $usage['completion_tokens'] ?? 0;
-    
-    echo "Tokens utilisés: $prompt_tokens (prompt) + $completion_tokens (réponse)";
-}
-```
-
----
-
-## ⚡ Ajouter un nouveau fournisseur IA
-
-1. Créer un fichier dans `/api/NouveauProvider.php`
-2. Nommer la classe `AI_NouveauProvider_API` avec une méthode `send_request()`
-3. Ajouter une entrée dans `providers-config.php` :
-
-```php
-'nouveauprovider' => [
-  'name' => 'Nouveau Provider',
-  'api_key_option' => 'ai_redactor_nouveauprovider_api_key',
-  'models' => [
-    'modele-1' => ['label' => 'Modèle Standard'],
-  ]
-]
-```
-
-4. La classe sera appelée automatiquement si l'utilisateur active ce provider dans l'admin.
-
----
-
-## 🔧 Outils de test et de diagnostic
-
-### `ai-admin-tester.php`
-- Page admin permettant de tester un prompt en live
-- Affiche la réponse ou l'erreur, ainsi que les temps de réponse si `AI_REDACTOR_DEBUG` est activé
-
-### `diagnostic.php`
-- Script autonome de test :
-  - vérifie que la config est valide
-  - liste les options en base de données
-  - simule l'appel à `send_prompt()` avec message de retour explicite
-
-### Utilisation du testeur de prompt dans l'admin
-1. Accédez à `AI Agent > Testeur de Prompt` dans le menu admin WordPress
-2. Entrez votre prompt dans la zone de texte
-3. Cliquez sur "Tester ce Prompt"
-4. Consultez la réponse ou les messages d'erreur
-5. En cas d'erreur, activez le diagnostic pour voir les détails techniques
-
----
-
-## 🔎 Conseils pour le débogage
-
-### Activer les logs de diagnostic
-Ajoutez dans votre fichier wp-config.php :
 ```php
 define('AI_AGENT_DEBUG', true);
 ```
 
-### Consulter les logs
-Les logs sont enregistrés dans `/logs/ai-agent.log` et contiennent :
-- Requêtes envoyées
-- Réponses reçues
-- Erreurs et avertissements
-- Performance (temps de réponse)
+Journal:
 
-### Problèmes fréquents et solutions
-1. **"Aucun modèle n'est configuré"**
-   - Vérifiez que l'option `ai_agent_active_model` est correctement définie
-   - Accédez à AI Agent > Connecteurs IA pour sélectionner un modèle
+```text
+logs/ai-connector.log
+```
 
-2. **"Format de réponse invalide"**
-   - Vérifiez que la classe API du fournisseur traite correctement le format de réponse
-   - Consultez les logs pour voir la réponse brute
+## Docs canoniques
 
-3. **"Clé API non configurée"**
-   - Vérifiez que la clé API est bien enregistrée pour le fournisseur actif
-   - Accédez à AI Agent > Connecteurs IA pour configurer la clé
-
----
-
-## 🎓 Bonnes pratiques
-
-- Toujours logger les erreurs si `AI_REDACTOR_DEBUG` est défini.
-- Ne jamais appeler directement les classes du dossier `/api/` ailleurs que via `AI_Request_Handler`.
-- Ne jamais exposer les clés API dans l'admin (utiliser `get_option()` uniquement côté serveur).
-- Utiliser `esc_html()`, `esc_attr()`, `sanitize_text_field()` pour toutes les entrées/sorties.
-
----
-
-## 🚫 Production
-
-- Le fichier `diagnostic.php` **ne doit jamais être déployé** sur un environnement en ligne.
-- Le plugin fonctionne même si une IA est mal configurée, tant qu'une autre est active et valide.
-
----
-
-## ✏️ TODO – Améliorations futures possibles
-
-- Ajouter des tests automatisés de chaque classe `send_request()`
-- Stocker les logs dans un fichier dédié
-- Ajouter un système de fallback si une IA est en erreur
-- Support multi-fournisseur (enchaînement de prompts)
-
----
-
-## 🚀 Fait avec soin par l'équipe dev.
-
-Version : 1.1.0
-Date : Avril 2025
-
----
+- [../../README.md](../../README.md)
+- [../../API.md](../../API.md)
+- [rest-api.md](rest-api.md)

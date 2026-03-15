@@ -7,7 +7,7 @@
  * d'administration des connecteurs IA. Il gère la validation des entrées, l'enregistrement des
  * clés API et la configuration des modèles actifs pour les différents fournisseurs d'IA.
  *
- * @package WP_Plugin_AI_Agent
+ * @package WP_Plugin_AI_Connector
  * @subpackage Services\AI\Core
  *
  * @depends WordPress Settings API
@@ -30,7 +30,7 @@ if (!defined('ABSPATH')) {
 /**
  * Classe pour gérer le traitement du formulaire
  */
-class AI_Agent_Form_Handler
+class AI_Connector_Form_Handler
 {
     /**
      * Configuration des fournisseurs IA
@@ -57,43 +57,46 @@ class AI_Agent_Form_Handler
      */
     public function process_form_submission()
     {
-        // Vérifier si une soumission de formulaire a eu lieu
-        if (!isset($_POST['ai_agent_connector_submit'])) {
+        $request_method = isset($_SERVER['REQUEST_METHOD']) ? strtoupper(wp_unslash($_SERVER['REQUEST_METHOD'])) : 'GET';
+        $current_page = isset($_GET['page']) ? sanitize_key(wp_unslash($_GET['page'])) : '';
+
+        if (
+            'POST' !== $request_method ||
+            'ai-connector-connectors' !== $current_page ||
+            !isset($_POST['ai_connector_connector_nonce'])
+        ) {
             return;
         }
 
-        // Vérifier le nonce
-        if (!check_admin_referer('ai_agent_save_connectors', 'ai_agent_connector_nonce')) {
+        // Vérifier les autorisations en premier
+        if (!current_user_can('manage_options')) {
             add_settings_error(
-                'ai_agent_connectors',
-                'nonce_error',
-                __('Échec de la vérification de sécurité. Veuillez réessayer.', 'wp-plugin-ai-agent'),
+                'ai_connector_connectors',
+                'permissions_error',
+                __('Vous n\'avez pas les droits suffisants pour modifier ces paramètres.', 'wp-plugin-ai-connector'),
                 'error'
             );
             return;
         }
 
-        // Vérifier les autorisations
-        if (!current_user_can('manage_options')) {
+        // Vérifier le nonce
+        if (!check_admin_referer('ai_connector_save_connectors', 'ai_connector_connector_nonce')) {
             add_settings_error(
-                'ai_agent_connectors',
-                'permissions_error',
-                __('Vous n\'avez pas les droits suffisants pour modifier ces paramètres.', 'wp-plugin-ai-agent'),
+                'ai_connector_connectors',
+                'nonce_error',
+                __('Échec de la vérification de sécurité. Veuillez réessayer.', 'wp-plugin-ai-connector'),
                 'error'
             );
             return;
         }
 
         // Enregistrer le modèle actif (au format 'provider:model')
-        if (isset($_POST['ai_agent_active_model'])) {
-            $active_model = sanitize_text_field($_POST['ai_agent_active_model']);
-            update_option('ai_agent_active_model', $active_model);
-
-            // Extraire le fournisseur du modèle actif sélectionné
-            $parts = explode(':', $active_model);
-            if (count($parts) === 2) {
-                $active_provider = $parts[0];
-                update_option('ai_redactor_active_provider', $active_provider);
+        if (isset($_POST['ai_connector_active_model'])) {
+            $active_model = sanitize_text_field(wp_unslash($_POST['ai_connector_active_model']));
+            $providers = ai_connector_get_providers_config();
+            $parts = explode(':', $active_model, 2);
+            if (2 === count($parts) && isset($providers[$parts[0]]['models'][$parts[1]])) {
+                ai_connector_set_active_model($active_model);
             }
         }
 
@@ -102,16 +105,16 @@ class AI_Agent_Form_Handler
             // Enregistrer la clé API
             $api_key_option = $provider_data['api_key_option'];
             if (isset($_POST[$api_key_option])) {
-                $api_key = sanitize_text_field($_POST[$api_key_option]);
+                $api_key = sanitize_text_field(wp_unslash($_POST[$api_key_option]));
                 update_option($api_key_option, $api_key);
             }
         }
 
         // Ajouter un message de succès
         add_settings_error(
-            'ai_agent_connectors',
+            'ai_connector_connectors',
             'settings_updated',
-            __('Paramètres des connecteurs IA enregistrés avec succès.', 'wp-plugin-ai-agent'),
+            __('Paramètres des connecteurs IA enregistrés avec succès.', 'wp-plugin-ai-connector'),
             'success'
         );
     }

@@ -37,7 +37,7 @@ if (!defined('ABSPATH')) {
 /**
  * Classe pour la page de test des prompts IA
  */
-class AI_Redactor_Admin_Tester
+class AI_Connector_Admin_Tester
 {
     /**
      * Initialisation de la classe
@@ -66,15 +66,16 @@ class AI_Redactor_Admin_Tester
         // Traitement d'actions de diagnostic si présentes
         if (
             isset($_POST['diagnostic_action']) && !empty($_POST['diagnostic_action']) &&
-            isset($_POST['ai_diagnostic_nonce']) && wp_verify_nonce($_POST['ai_diagnostic_nonce'], 'ai_diagnostic_action')
+            isset($_POST['ai_diagnostic_nonce']) && wp_verify_nonce($_POST['ai_diagnostic_nonce'], 'ai_diagnostic_action') &&
+            current_user_can('manage_options')
         ) {
 
             $action = sanitize_text_field($_POST['diagnostic_action']);
 
             // Réinitialiser le modèle actif
             if ($action === 'reset_model') {
-                delete_option('ai_agent_active_model');
-                add_settings_error('ai_agent_tester', 'model_reset', __('Modèle actif réinitialisé avec succès!', 'ai-agent'), 'success');
+                ai_connector_set_active_model('');
+                add_settings_error('ai_connector_tester', 'model_reset', __('Modèle actif réinitialisé avec succès!', 'ai-connector'), 'success');
                 $show_diagnostic = true;
             }
             // Définir un nouveau modèle actif
@@ -85,12 +86,12 @@ class AI_Redactor_Admin_Tester
                     $model_id = $parts[2];
 
                     $new_active_model = $provider_id . ':' . $model_id;
-                    update_option('ai_agent_active_model', $new_active_model);
+                    ai_connector_set_active_model($new_active_model);
 
                     add_settings_error(
-                        'ai_agent_tester',
+                        'ai_connector_tester',
                         'model_updated',
-                        sprintf(__('Modèle actif défini avec succès: %s', 'ai-agent'), $new_active_model),
+                        sprintf(__('Modèle actif défini avec succès: %s', 'ai-connector'), $new_active_model),
                         'success'
                     );
                     $show_diagnostic = true;
@@ -100,14 +101,8 @@ class AI_Redactor_Admin_Tester
 
         // Traitement du formulaire de test s'il est soumis
         if (isset($_POST['ai_redactor_test_prompt_submit']) && isset($_POST['test_prompt'])) {
-            ai_agent_log('Formulaire de test soumis - Validation du nonce', 'info');
+            ai_connector_log('Formulaire de test soumis - Validation du nonce', 'info');
 
-            if (!isset($_POST['ai_redactor_test_prompt_nonce']) || !wp_verify_nonce($_POST['ai_redactor_test_prompt_nonce'], 'ai_redactor_test_prompt')) {
-                ai_agent_log('Échec de la validation du nonce - Erreur de sécurité', 'error');
-                wp_die('Erreur de sécurité. Veuillez réessayer.');
-            }
-
-            ai_agent_log('Nonce validé avec succès', 'info');
             check_admin_referer('ai_redactor_test_prompt', 'ai_redactor_test_prompt_nonce');
 
             $prompt = sanitize_textarea_field($_POST['test_prompt']);
@@ -116,60 +111,60 @@ class AI_Redactor_Admin_Tester
                 // Inclure le gestionnaire de requêtes (correction du chemin)
                 require_once dirname(dirname(__FILE__)) . '/services/ai/core/ai-request-handler.php';
 
-                ai_agent_log('========== DÉBUT TRAITEMENT TEST PROMPT ==========', 'info');
-                ai_agent_log('Prompt soumis: ' . substr($prompt, 0, 50) . '... (' . strlen($prompt) . ' caractères)', 'info');
+                ai_connector_log('========== DÉBUT TRAITEMENT TEST PROMPT ==========', 'info');
+                ai_connector_log('Prompt soumis: ' . substr($prompt, 0, 50) . '... (' . strlen($prompt) . ' caractères)', 'info');
 
                 // Mesurer le temps de réponse si le mode debug est activé
                 if (defined('AI_AGENT_DEBUG') && AI_AGENT_DEBUG) {
                     $start_time = microtime(true);
-                    ai_agent_log('Démarrage du chronomètre pour mesurer le temps de réponse', 'debug');
+                    ai_connector_log('Démarrage du chronomètre pour mesurer le temps de réponse', 'debug');
                 }
 
                 // Définir une limite de temps d'exécution plus longue pour les modèles qui peuvent être lents
                 $original_time_limit = ini_get('max_execution_time');
                 set_time_limit(180); // 3 minutes pour donner plus de temps aux modèles lents
-                ai_agent_log('Limite de temps d\'exécution augmentée à 180 secondes (était: ' . $original_time_limit . ')', 'debug');
+                ai_connector_log('Limite de temps d\'exécution augmentée à 180 secondes (était: ' . $original_time_limit . ')', 'debug');
 
                 try {
                     // Récupérer les informations sur le modèle actif
-                    ai_agent_log('Récupération des informations sur le modèle actif', 'info');
+                    ai_connector_log('Récupération des informations sur le modèle actif', 'info');
                     $active_model_info = $this->get_active_model_info();
-                    ai_agent_log('Modèle actif: ' . ($active_model_info['has_model'] ? $active_model_info['provider_name'] . ' / ' . $active_model_info['model_name'] : 'Non configuré'), 'info');
+                    ai_connector_log('Modèle actif: ' . ($active_model_info['has_model'] ? $active_model_info['provider_name'] . ' / ' . $active_model_info['model_name'] : 'Non configuré'), 'info');
 
                     // Vérifier que le modèle et la clé API sont configurés avant d'envoyer
                     if (!$active_model_info['has_model']) {
-                        ai_agent_log('ERREUR: Aucun modèle n\'est configuré', 'error');
+                        ai_connector_log('ERREUR: Aucun modèle n\'est configuré', 'error');
                         throw new Exception('Aucun modèle n\'est configuré. Veuillez configurer un modèle dans Connecteurs IA.');
                     }
 
                     if (!$active_model_info['has_api_key']) {
-                        ai_agent_log('ERREUR: Aucune clé API n\'est configurée pour ' . $active_model_info['provider_name'], 'error');
+                        ai_connector_log('ERREUR: Aucune clé API n\'est configurée pour ' . $active_model_info['provider_name'], 'error');
                         throw new Exception('Aucune clé API n\'est configurée pour ' . $active_model_info['provider_name'] . '. Veuillez configurer une clé dans Connecteurs IA.');
                     }
 
-                    ai_agent_log('Configuration validée, préparation de l\'envoi du prompt à AI_Request_Handler', 'info');
+                    ai_connector_log('Configuration validée, préparation de l\'envoi du prompt à AI_Request_Handler', 'info');
 
                     // Envoi du prompt via AI_Request_Handler, la méthode centrale recommandée dans la documentation
-                    ai_agent_log('Envoi du prompt à AI_Request_Handler::send_prompt()', 'info');
+                    ai_connector_log('Envoi du prompt à AI_Request_Handler::send_prompt()', 'info');
                     $result = AI_Request_Handler::send_prompt($prompt);
 
-                    ai_agent_log('Réponse reçue de AI_Request_Handler', 'info');
-                    ai_agent_log('Statut de la réponse: ' . ($result['success'] ? 'Succès' : 'Échec'), 'info');
+                    ai_connector_log('Réponse reçue de AI_Request_Handler', 'info');
+                    ai_connector_log('Statut de la réponse: ' . ($result['success'] ? 'Succès' : 'Échec'), 'info');
 
                     // Journaliser des informations supplémentaires sur la réponse
                     if (isset($result['response'])) {
-                        ai_agent_log('Longueur de la réponse: ' . strlen($result['response']) . ' caractères', 'debug');
-                        ai_agent_log('Extrait de la réponse: ' . substr($result['response'], 0, 100) . '...', 'debug');
+                        ai_connector_log('Longueur de la réponse: ' . strlen($result['response']) . ' caractères', 'debug');
+                        ai_connector_log('Extrait de la réponse: ' . substr($result['response'], 0, 100) . '...', 'debug');
                     }
 
                     // Vérifier si des métadonnées sont disponibles (selon le fournisseur)
                     if (isset($result['meta'])) {
-                        ai_agent_log('Métadonnées reçues: ' . json_encode($result['meta']), 'debug');
+                        ai_connector_log('Métadonnées reçues: ' . json_encode($result['meta']), 'debug');
 
                         // Pour OpenAI, journaliser l'utilisation des tokens
                         if (isset($result['meta']['usage'])) {
                             $usage = $result['meta']['usage'];
-                            ai_agent_log(
+                            ai_connector_log(
                                 'Tokens utilisés: ' .
                                     ($usage['prompt_tokens'] ?? 0) . ' (prompt) + ' .
                                     ($usage['completion_tokens'] ?? 0) . ' (réponse)',
@@ -179,32 +174,32 @@ class AI_Redactor_Admin_Tester
                     }
 
                     if (isset($result['error']) && !empty($result['error'])) {
-                        ai_agent_log('Message d\'erreur: ' . $result['error'], 'error');
+                        ai_connector_log('Message d\'erreur: ' . $result['error'], 'error');
                     }
 
                     // Vérifier le résultat de la requête
                     if (!isset($result) || !is_array($result)) {
-                        ai_agent_log('ERREUR: Format de réponse invalide retourné par AI_Request_Handler', 'error');
+                        ai_connector_log('ERREUR: Format de réponse invalide retourné par AI_Request_Handler', 'error');
                         throw new Exception('Format de réponse invalide. La requête a échoué de manière inattendue.');
                     }
 
                     // Traiter la réponse
                     if ($result['success']) {
-                        ai_agent_log('Traitement de la réponse réussie', 'info');
+                        ai_connector_log('Traitement de la réponse réussie', 'info');
                         // Afficher un message de succès
                         add_settings_error(
-                            'ai_agent_tester',
+                            'ai_connector_tester',
                             'response_received',
-                            __('Prompt traité avec succès!', 'ai-agent'),
+                            __('Prompt traité avec succès!', 'ai-connector'),
                             'success'
                         );
                     } else {
                         // Si le résultat n'est pas un succès mais qu'il y a un message d'erreur
                         if (isset($result['error']) && !empty($result['error'])) {
-                            ai_agent_log('ERREUR retournée: ' . $result['error'], 'error');
+                            ai_connector_log('ERREUR retournée: ' . $result['error'], 'error');
                             throw new Exception($result['error']);
                         } else {
-                            ai_agent_log('ERREUR: Aucun message d\'erreur spécifique retourné', 'error');
+                            ai_connector_log('ERREUR: Aucun message d\'erreur spécifique retourné', 'error');
                             throw new Exception('Erreur inconnue lors du traitement du prompt.');
                         }
                     }
@@ -212,13 +207,13 @@ class AI_Redactor_Admin_Tester
                     // Calculer le temps de réponse
                     if (defined('AI_AGENT_DEBUG') && AI_AGENT_DEBUG) {
                         $response_time = microtime(true) - $start_time;
-                        ai_agent_log('Temps de réponse total: ' . $response_time . ' secondes', 'debug');
+                        ai_connector_log('Temps de réponse total: ' . $response_time . ' secondes', 'debug');
                     }
                 } catch (Exception $e) {
                     // Capturer toute exception non gérée
-                    ai_agent_log('EXCEPTION: ' . $e->getMessage(), 'error');
+                    ai_connector_log('EXCEPTION: ' . $e->getMessage(), 'error');
                     if (defined('AI_AGENT_DEBUG') && AI_AGENT_DEBUG) {
-                        ai_agent_log('Trace de l\'exception: ' . $e->getTraceAsString(), 'debug');
+                        ai_connector_log('Trace de l\'exception: ' . $e->getTraceAsString(), 'debug');
                     }
 
                     $result = [
@@ -228,16 +223,16 @@ class AI_Redactor_Admin_Tester
                     ];
                 }
 
-                ai_agent_log('Restauration de la limite de temps d\'exécution à ' . $original_time_limit . ' secondes', 'debug');
+                ai_connector_log('Restauration de la limite de temps d\'exécution à ' . $original_time_limit . ' secondes', 'debug');
                 set_time_limit($original_time_limit);
 
                 // Activer automatiquement le diagnostic en cas d'erreur
                 if (isset($result) && !$result['success']) {
-                    ai_agent_log('Activation du diagnostic suite à une erreur', 'info');
+                    ai_connector_log('Activation du diagnostic suite à une erreur', 'info');
                     $show_diagnostic = true;
                 } else if (!isset($result)) {
                     // Si pour une raison quelconque $result n'est pas défini, créer un résultat d'erreur
-                    ai_agent_log('ERREUR: Variable $result non définie après traitement', 'error');
+                    ai_connector_log('ERREUR: Variable $result non définie après traitement', 'error');
                     $result = [
                         'success' => false,
                         'response' => null,
@@ -246,7 +241,7 @@ class AI_Redactor_Admin_Tester
                     $show_diagnostic = true;
                 }
 
-                ai_agent_log('========== FIN TRAITEMENT TEST PROMPT ==========', 'info');
+                ai_connector_log('========== FIN TRAITEMENT TEST PROMPT ==========', 'info');
             }
         }
 
@@ -258,92 +253,93 @@ class AI_Redactor_Admin_Tester
 
         // Afficher l'interface
 ?>
-        <div class="wrap ai-redactor-wrap ai-redactor-admin">
-            <h1><?php echo esc_html__('Testeur de Prompt IA', 'ai-redactor'); ?></h1>
+        <div class="wrap ai-connector-wrap">
+            <div class="ai-connector-header">
+                <h1><?php echo esc_html__('Testeur de Prompt IA', 'ai-redactor'); ?></h1>
+                <p class="description">
+                    <?php echo esc_html__('Utilisez cette page pour tester rapidement des prompts avec le modèle d\'IA actuellement configuré.', 'ai-redactor'); ?>
+                    <?php if (!$show_diagnostic): ?>
+                        <a href="<?php echo add_query_arg('diagnostic', '1'); ?>" class="ai-connector-diagnostic-link">
+                            <?php echo esc_html__('Afficher les informations de diagnostic', 'ai-redactor'); ?>
+                        </a>
+                    <?php endif; ?>
+                </p>
+            </div>
 
-            <?php settings_errors('ai_agent_tester'); ?>
-
-            <p class="description">
-                <?php echo esc_html__('Utilisez cette page pour tester rapidement des prompts avec le modèle d\'IA actuellement configuré.', 'ai-redactor'); ?>
-                <?php if (!$show_diagnostic): ?>
-                    <a href="<?php echo add_query_arg('diagnostic', '1'); ?>" class="ai-redactor-diagnostic-link">
-                        <?php echo esc_html__('Afficher les informations de diagnostic', 'ai-redactor'); ?>
-                    </a>
-                <?php endif; ?>
-            </p>
+            <?php settings_errors('ai_connector_tester'); ?>
 
             <!-- Informations sur le modèle actif -->
-            <div class="ai-redactor-card ai-redactor-tester-info">
-                <div class="ai-redactor-card-header">
+            <div class="ai-connector-card">
+                <div class="ai-connector-card-header">
                     <h2><?php echo esc_html__('Modèle IA actif', 'ai-redactor'); ?></h2>
                 </div>
-
-                <?php if ($active_model_info['has_model']): ?>
-                    <div class="ai-redactor-model-info">
-                        <p>
-                            <strong><?php echo esc_html__('Fournisseur:', 'ai-redactor'); ?></strong>
-                            <?php echo esc_html($active_model_info['provider_name']); ?>
-                        </p>
-                        <p>
-                            <strong><?php echo esc_html__('Modèle:', 'ai-redactor'); ?></strong>
-                            <?php echo esc_html($active_model_info['model_name']); ?>
-                        </p>
-                        <p>
-                            <strong><?php echo esc_html__('Clé API:', 'ai-redactor'); ?></strong>
-                            <?php if ($active_model_info['has_api_key']): ?>
-                                <span class="ai-redactor-badge success"><?php echo esc_html__('Configurée', 'ai-redactor'); ?></span>
-                            <?php else: ?>
-                                <span class="ai-redactor-badge error"><?php echo esc_html__('Non configurée', 'ai-redactor'); ?></span>
-                            <?php endif; ?>
-                        </p>
-
-                        <?php if (defined('AI_AGENT_DEBUG') && AI_AGENT_DEBUG): ?>
-                            <div class="ai-redactor-debug-info">
-                                <p><strong>Debug - Valeur stockée:</strong> <?php echo esc_html(get_option('ai_agent_active_model', 'Non définie')); ?></p>
-                                <p><strong>Debug - ID Fournisseur:</strong> <?php echo esc_html($active_model_info['provider_id']); ?></p>
-                                <p><strong>Debug - ID Modèle:</strong> <?php echo esc_html($active_model_info['model_id']); ?></p>
-                            </div>
-                        <?php endif; ?>
-
-                        <?php if (!$active_model_info['has_api_key']): ?>
-                            <p class="ai-redactor-warning">
-                                <?php
-                                echo sprintf(
-                                    __('Pour utiliser ce modèle, vous devez configurer une clé API dans <a href="%s">Connecteurs IA</a>.', 'ai-redactor'),
-                                    admin_url('admin.php?page=ai-agent-connectors')
-                                );
-                                ?>
+                <div class="ai-connector-card-content">
+                    <?php if ($active_model_info['has_model']): ?>
+                        <div class="ai-connector-model-info">
+                            <p>
+                                <strong><?php echo esc_html__('Fournisseur:', 'ai-redactor'); ?></strong>
+                                <?php echo esc_html($active_model_info['provider_name']); ?>
                             </p>
-                        <?php endif; ?>
-                    </div>
-                <?php else: ?>
-                    <p class="ai-redactor-warning">
-                        <?php
-                        echo sprintf(
-                            __('Aucun modèle n\'est actuellement sélectionné. Veuillez en configurer un dans <a href="%s">Connecteurs IA</a>.', 'ai-redactor'),
-                            admin_url('admin.php?page=ai-agent-connectors')
-                        );
-                        ?>
-                    </p>
-                <?php endif; ?>
+                            <p>
+                                <strong><?php echo esc_html__('Modèle:', 'ai-redactor'); ?></strong>
+                                <?php echo esc_html($active_model_info['model_name']); ?>
+                            </p>
+                            <p>
+                                <strong><?php echo esc_html__('Clé API:', 'ai-redactor'); ?></strong>
+                                <?php if ($active_model_info['has_api_key']): ?>
+                                    <span class="ai-connector-badge ai-connector-badge-success"><?php echo esc_html__('Configurée', 'ai-redactor'); ?></span>
+                                <?php else: ?>
+                                    <span class="ai-connector-badge ai-connector-badge-error"><?php echo esc_html__('Non configurée', 'ai-redactor'); ?></span>
+                                <?php endif; ?>
+                            </p>
+
+                            <?php if (defined('AI_AGENT_DEBUG') && AI_AGENT_DEBUG): ?>
+                                <div class="ai-connector-debug-info">
+                                    <p><strong>Debug - Valeur stockée:</strong> <?php echo esc_html(ai_connector_get_active_model_string()); ?></p>
+                                    <p><strong>Debug - ID Fournisseur:</strong> <?php echo esc_html($active_model_info['provider_id']); ?></p>
+                                    <p><strong>Debug - ID Modèle:</strong> <?php echo esc_html($active_model_info['model_id']); ?></p>
+                                </div>
+                            <?php endif; ?>
+
+                            <?php if (!$active_model_info['has_api_key']): ?>
+                                <div class="ai-connector-notice ai-connector-notice-warning">
+                                    <?php
+                                    echo sprintf(
+                                        __('Pour utiliser ce modèle, vous devez configurer une clé API dans <a href="%s">Connecteurs IA</a>.', 'ai-redactor'),
+                                        admin_url('admin.php?page=ai-connector-connectors')
+                                    );
+                                    ?>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    <?php else: ?>
+                        <div class="ai-connector-notice ai-connector-notice-warning">
+                            <?php
+                            echo sprintf(
+                                __('Aucun modèle n\'est actuellement sélectionné. Veuillez en configurer un dans <a href="%s">Connecteurs IA</a>.', 'ai-redactor'),
+                                admin_url('admin.php?page=ai-connector-connectors')
+                            );
+                            ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
             </div>
 
             <!-- Section de diagnostic -->
             <?php if ($show_diagnostic): ?>
-                <div class="ai-redactor-card ai-redactor-diagnostic-section">
-                    <div class="ai-redactor-card-header">
+                <div class="ai-connector-card">
+                    <div class="ai-connector-card-header">
                         <h2><?php echo esc_html__('Diagnostique et résolution de problèmes', 'ai-redactor'); ?></h2>
-                        <a href="<?php echo remove_query_arg('diagnostic'); ?>" class="ai-redactor-hide-diagnostic">
-                            <?php echo esc_html__('Masquer les informations de diagnostic', 'ai-redactor'); ?>
+                        <a href="<?php echo remove_query_arg('diagnostic'); ?>" class="ai-connector-button ai-connector-button-secondary">
+                            <?php echo esc_html__('Masquer le diagnostic', 'ai-redactor'); ?>
                         </a>
                     </div>
-
-                    <div class="ai-redactor-diagnostic-content">
+                    <div class="ai-connector-card-content">
                         <!-- Tableau d'analyse du modèle actif -->
                         <h3><?php echo esc_html__('Analyse de la configuration', 'ai-redactor'); ?></h3>
 
                         <?php
-                        $active_model_combined = get_option('ai_agent_active_model', '');
+                        $active_model_combined = ai_connector_get_active_model_string();
                         $parts = explode(':', $active_model_combined);
                         $active_provider = isset($parts[0]) ? $parts[0] : '';
                         $active_model = isset($parts[1]) ? $parts[1] : '';
@@ -356,7 +352,7 @@ class AI_Redactor_Admin_Tester
                         $api_key_valid = !empty($api_key);
                         ?>
 
-                        <table class="ai-redactor-diagnostic-table">
+                        <table class="ai-connector-table">
                             <tr>
                                 <th><?php echo esc_html__('Élément', 'ai-redactor'); ?></th>
                                 <th><?php echo esc_html__('Statut', 'ai-redactor'); ?></th>
@@ -366,9 +362,9 @@ class AI_Redactor_Admin_Tester
                                 <td><?php echo esc_html__('Valeur de l\'option', 'ai-redactor'); ?></td>
                                 <td>
                                     <?php if (!empty($active_model_combined)): ?>
-                                        <span class="ai-redactor-status success"><?php echo esc_html__('OK', 'ai-redactor'); ?></span>
+                                        <span class="ai-connector-badge ai-connector-badge-success"><?php echo esc_html__('OK', 'ai-redactor'); ?></span>
                                     <?php else: ?>
-                                        <span class="ai-redactor-status error"><?php echo esc_html__('MANQUANT', 'ai-redactor'); ?></span>
+                                        <span class="ai-connector-badge ai-connector-badge-error"><?php echo esc_html__('MANQUANT', 'ai-redactor'); ?></span>
                                     <?php endif; ?>
                                 </td>
                                 <td><?php echo esc_html($active_model_combined); ?></td>
@@ -377,9 +373,9 @@ class AI_Redactor_Admin_Tester
                                 <td><?php echo esc_html__('Format', 'ai-redactor'); ?></td>
                                 <td>
                                     <?php if (count($parts) === 2): ?>
-                                        <span class="ai-redactor-status success"><?php echo esc_html__('OK', 'ai-redactor'); ?></span>
+                                        <span class="ai-connector-badge ai-connector-badge-success"><?php echo esc_html__('OK', 'ai-redactor'); ?></span>
                                     <?php else: ?>
-                                        <span class="ai-redactor-status error"><?php echo esc_html__('INVALIDE', 'ai-redactor'); ?></span>
+                                        <span class="ai-connector-badge ai-connector-badge-error"><?php echo esc_html__('INVALIDE', 'ai-redactor'); ?></span>
                                     <?php endif; ?>
                                 </td>
                                 <td><?php echo esc_html__('Doit être au format "fournisseur:modèle"', 'ai-redactor'); ?></td>
@@ -388,9 +384,9 @@ class AI_Redactor_Admin_Tester
                                 <td><?php echo esc_html__('Fournisseur', 'ai-redactor'); ?></td>
                                 <td>
                                     <?php if ($provider_valid): ?>
-                                        <span class="ai-redactor-status success"><?php echo esc_html__('VALIDE', 'ai-redactor'); ?></span>
+                                        <span class="ai-connector-badge ai-connector-badge-success"><?php echo esc_html__('VALIDE', 'ai-redactor'); ?></span>
                                     <?php else: ?>
-                                        <span class="ai-redactor-status error"><?php echo esc_html__('INVALIDE', 'ai-redactor'); ?></span>
+                                        <span class="ai-connector-badge ai-connector-badge-error"><?php echo esc_html__('INVALIDE', 'ai-redactor'); ?></span>
                                     <?php endif; ?>
                                 </td>
                                 <td>
@@ -406,9 +402,9 @@ class AI_Redactor_Admin_Tester
                                 <td><?php echo esc_html__('Modèle', 'ai-redactor'); ?></td>
                                 <td>
                                     <?php if ($model_valid): ?>
-                                        <span class="ai-redactor-status success"><?php echo esc_html__('VALIDE', 'ai-redactor'); ?></span>
+                                        <span class="ai-connector-badge ai-connector-badge-success"><?php echo esc_html__('VALIDE', 'ai-redactor'); ?></span>
                                     <?php else: ?>
-                                        <span class="ai-redactor-status error"><?php echo esc_html__('INVALIDE', 'ai-redactor'); ?></span>
+                                        <span class="ai-connector-badge ai-connector-badge-error"><?php echo esc_html__('INVALIDE', 'ai-redactor'); ?></span>
                                     <?php endif; ?>
                                 </td>
                                 <td>
@@ -424,9 +420,9 @@ class AI_Redactor_Admin_Tester
                                 <td><?php echo esc_html__('Clé API', 'ai-redactor'); ?></td>
                                 <td>
                                     <?php if ($api_key_valid): ?>
-                                        <span class="ai-redactor-status success"><?php echo esc_html__('CONFIGURÉE', 'ai-redactor'); ?></span>
+                                        <span class="ai-connector-badge ai-connector-badge-success"><?php echo esc_html__('CONFIGURÉE', 'ai-redactor'); ?></span>
                                     <?php else: ?>
-                                        <span class="ai-redactor-status error"><?php echo esc_html__('MANQUANTE', 'ai-redactor'); ?></span>
+                                        <span class="ai-connector-badge ai-connector-badge-error"><?php echo esc_html__('MANQUANTE', 'ai-redactor'); ?></span>
                                     <?php endif; ?>
                                 </td>
                                 <td>
@@ -443,10 +439,10 @@ class AI_Redactor_Admin_Tester
 
                         <!-- Actions de correction -->
                         <h3><?php echo esc_html__('Actions de correction', 'ai-redactor'); ?></h3>
-                        <form method="post" action="">
+                        <form method="post" action="" class="ai-connector-form-row">
                             <?php wp_nonce_field('ai_diagnostic_action', 'ai_diagnostic_nonce'); ?>
 
-                            <select name="diagnostic_action" class="ai-redactor-select">
+                            <select name="diagnostic_action" class="ai-connector-select">
                                 <option value=""><?php echo esc_html__('Sélectionnez une action...', 'ai-redactor'); ?></option>
 
                                 <?php
@@ -467,7 +463,7 @@ class AI_Redactor_Admin_Tester
                                 <option value="reset_model"><?php echo esc_html__('Réinitialiser le modèle actif', 'ai-redactor'); ?></option>
                             </select>
 
-                            <button type="submit" class="button button-secondary">
+                            <button type="submit" class="ai-connector-button ai-connector-button-secondary">
                                 <?php echo esc_html__('Exécuter', 'ai-redactor'); ?>
                             </button>
                         </form>
@@ -476,44 +472,42 @@ class AI_Redactor_Admin_Tester
             <?php endif; ?>
 
             <!-- Formulaire de test -->
-            <div class="ai-redactor-card">
-                <div class="ai-redactor-card-header">
+            <div class="ai-connector-card">
+                <div class="ai-connector-card-header">
                     <h2><?php echo esc_html__('Tester un prompt', 'ai-redactor'); ?></h2>
                 </div>
+                <div class="ai-connector-card-content">
+                    <form method="post" action="<?php echo esc_url($_SERVER['REQUEST_URI']); ?>" id="ai-connector-test-form" class="ai-connector-form-row">
+                        <?php wp_nonce_field('ai_redactor_test_prompt', 'ai_redactor_test_prompt_nonce'); ?>
 
-                <form method="post" action="<?php echo esc_url($_SERVER['REQUEST_URI']); ?>" id="ai-redactor-test-form">
-                    <?php wp_nonce_field('ai_redactor_test_prompt', 'ai_redactor_test_prompt_nonce'); ?>
-
-                    <div class="ai-redactor-form-row">
                         <label for="test_prompt">
                             <?php echo esc_html__('Saisissez votre prompt:', 'ai-redactor'); ?>
                         </label>
                         <textarea name="test_prompt" id="test_prompt" rows="6" class="large-text"
                             placeholder="<?php echo esc_attr__('Exemple: Résume l\'histoire de France en 100 mots', 'ai-redactor'); ?>"><?php echo esc_textarea($prompt); ?></textarea>
 
-
-                        <p class="submit">
-                            <input type="submit" name="ai_redactor_test_prompt_submit" id="ai-redactor-test-submit" class="button button-primary"
+                        <div class="submit">
+                            <input type="submit" name="ai_redactor_test_prompt_submit" id="ai-connector-test-submit" class="button button-primary"
                                 value="<?php echo esc_attr__('Tester ce prompt', 'ai-redactor'); ?>">
-                            <span id="ai-redactor-loading" class="ai-redactor-loading" style="display: none;">
+                            <div id="ai-connector-loading" class="ai-connector-loading" style="display: none;">
                                 <span class="spinner is-active"></span>
-                                <span class="ai-redactor-loading-text"><?php echo esc_html__('Traitement en cours... Veuillez patienter pendant que l\'IA génère une réponse.', 'ai-redactor'); ?></span>
-                            </span>
+                                <span class="ai-connector-loading-text"><?php echo esc_html__('Traitement en cours... Veuillez patienter pendant que l\'IA génère une réponse.', 'ai-redactor'); ?></span>
+                            </div>
+                        </div>
 
-                            <?php if (!$active_model_info['has_model'] || !$active_model_info['has_api_key']): ?>
-                        <p class="ai-redactor-warning">
-                            <?php echo esc_html__('Vous devez configurer un modèle et une clé API avant de pouvoir tester un prompt.', 'ai-redactor'); ?>
-                        </p>
-                    </div>
-                <?php endif; ?>
-                </p>
-                </form>
+                        <?php if (!$active_model_info['has_model'] || !$active_model_info['has_api_key']): ?>
+                            <div class="ai-connector-notice ai-connector-notice-warning">
+                                <?php echo esc_html__('Vous devez configurer un modèle et une clé API avant de pouvoir tester un prompt.', 'ai-redactor'); ?>
+                            </div>
+                        <?php endif; ?>
+                    </form>
+                </div>
             </div>
 
             <?php if ($result !== null): ?>
                 <!-- Résultat du test -->
-                <div class="ai-redactor-card">
-                    <div class="ai-redactor-card-header">
+                <div class="ai-connector-card">
+                    <div class="ai-connector-card-header">
                         <h2>
                             <?php
                             if ($result['success']) {
@@ -525,68 +519,70 @@ class AI_Redactor_Admin_Tester
                         </h2>
 
                         <?php if (defined('AI_AGENT_DEBUG') && AI_AGENT_DEBUG && $response_time > 0): ?>
-                            <span class="ai-redactor-response-time">
+                            <span class="ai-connector-response-time">
                                 <?php printf(esc_html__('Temps de réponse: %.2f secondes', 'ai-redactor'), $response_time); ?>
                             </span>
                         <?php endif; ?>
                     </div>
-
-                    <?php if ($result['success']): ?>
-                        <div class="ai-redactor-test-response success">
-                            <?php echo wpautop(esc_html($result['response'])); ?>
-                        </div>
-                    <?php else: ?>
-                        <div class="ai-redactor-test-response error">
-                            <p class="ai-redactor-error-message">
-                                <strong><?php echo esc_html__('Erreur:', 'ai-redactor'); ?></strong>
-                                <?php echo esc_html($result['error']); ?>
-                            </p>
-
-                            <?php
-                            // Information supplémentaire pour les timeouts
-                            if (strpos($result['error'], 'timed out') !== false || strpos($result['error'], 'timeout') !== false):
-                            ?>
-                                <div class="ai-redactor-error-details">
-                                    <p><strong><?php echo esc_html__('Suggestions:', 'ai-redactor'); ?></strong></p>
-                                    <ul>
-                                        <li><?php echo esc_html__('Les modèles les plus avancés (comme GPT-4 ou Claude Opus) peuvent parfois prendre plus de temps à répondre.', 'ai-redactor'); ?></li>
-                                        <li><?php echo esc_html__('Essayez de raccourcir votre prompt ou d\'utiliser un modèle plus rapide.', 'ai-redactor'); ?></li>
-                                        <li><?php echo esc_html__('Vérifiez votre connexion internet.', 'ai-redactor'); ?></li>
-                                    </ul>
+                    <div class="ai-connector-card-content">
+                        <?php if ($result['success']): ?>
+                            <div class="ai-connector-test-response ai-connector-test-response-success">
+                                <?php echo wpautop(esc_html($result['response'])); ?>
+                            </div>
+                        <?php else: ?>
+                            <div class="ai-connector-test-response ai-connector-test-response-error">
+                                <div class="ai-connector-error-message">
+                                    <strong><?php echo esc_html__('Erreur:', 'ai-redactor'); ?></strong>
+                                    <?php echo esc_html($result['error']); ?>
                                 </div>
-                            <?php endif; ?>
 
-                            <?php if (strpos($result['error'], 'API key') !== false || strpos($result['error'], 'authentication') !== false): ?>
-                                <div class="ai-redactor-error-details">
-                                    <p><strong><?php echo esc_html__('Suggestions:', 'ai-redactor'); ?></strong></p>
-                                    <ul>
-                                        <li><?php echo esc_html__('Vérifiez que votre clé API est correcte et n\'a pas expiré.', 'ai-redactor'); ?></li>
-                                        <li><?php echo esc_html__('Assurez-vous d\'avoir suffisamment de crédits sur votre compte.', 'ai-redactor'); ?></li>
-                                    </ul>
-                                </div>
-                            <?php endif; ?>
+                                <?php
+                                // Information supplémentaire pour les timeouts
+                                if (strpos($result['error'], 'timed out') !== false || strpos($result['error'], 'timeout') !== false):
+                                ?>
+                                    <div class="ai-connector-error-details">
+                                        <p><strong><?php echo esc_html__('Suggestions:', 'ai-redactor'); ?></strong></p>
+                                        <ul>
+                                            <li><?php echo esc_html__('Les modèles les plus avancés (comme GPT-4 ou Claude Opus) peuvent parfois prendre plus de temps à répondre.', 'ai-redactor'); ?></li>
+                                            <li><?php echo esc_html__('Essayez de raccourcir votre prompt ou d\'utiliser un modèle plus rapide.', 'ai-redactor'); ?></li>
+                                            <li><?php echo esc_html__('Vérifiez votre connexion internet.', 'ai-redactor'); ?></li>
+                                        </ul>
+                                    </div>
+                                <?php endif; ?>
 
-                            <?php if (!$show_diagnostic): ?>
-                                <p class="ai-redactor-diagnostic-suggestion">
-                                    <?php echo sprintf(
-                                        __('Pour résoudre ce problème, vous pouvez <a href="%s">afficher les informations de diagnostic</a>.', 'ai-redactor'),
-                                        add_query_arg('diagnostic', '1')
-                                    ); ?>
-                                </p>
-                            <?php endif; ?>
-                        </div>
-                    <?php endif; ?>
+                                <?php if (strpos($result['error'], 'API key') !== false || strpos($result['error'], 'authentication') !== false): ?>
+                                    <div class="ai-connector-error-details">
+                                        <p><strong><?php echo esc_html__('Suggestions:', 'ai-redactor'); ?></strong></p>
+                                        <ul>
+                                            <li><?php echo esc_html__('Vérifiez que votre clé API est correcte et n\'a pas expiré.', 'ai-redactor'); ?></li>
+                                            <li><?php echo esc_html__('Assurez-vous d\'avoir suffisamment de crédits sur votre compte.', 'ai-redactor'); ?></li>
+                                        </ul>
+                                    </div>
+                                <?php endif; ?>
+
+                                <?php if (!$show_diagnostic): ?>
+                                    <div class="ai-connector-diagnostic-suggestion">
+                                        <?php echo sprintf(
+                                            __('Pour résoudre ce problème, vous pouvez <a href="%s">afficher les informations de diagnostic</a>.', 'ai-redactor'),
+                                            add_query_arg('diagnostic', '1')
+                                        ); ?>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+                        <?php endif; ?>
+                    </div>
                 </div>
 
                 <!-- Données brutes (utile pour le débogage) -->
                 <?php if (defined('AI_REDACTOR_DEBUG') && AI_REDACTOR_DEBUG): ?>
-                    <div class="ai-redactor-card">
-                        <div class="ai-redactor-card-header">
+                    <div class="ai-connector-card">
+                        <div class="ai-connector-card-header">
                             <h2><?php echo esc_html__('Données brutes', 'ai-redactor'); ?></h2>
                         </div>
-
-                        <div class="ai-redactor-raw-data">
-                            <pre><?php print_r($result); ?></pre>
+                        <div class="ai-connector-card-content">
+                            <div class="ai-connector-raw-data">
+                                <pre><?php print_r($result); ?></pre>
+                            </div>
                         </div>
                     </div>
                 <?php endif; ?>
@@ -595,18 +591,18 @@ class AI_Redactor_Admin_Tester
         <script type="text/javascript">
             jQuery(document).ready(function($) {
                 // Afficher l'indicateur de chargement lors de la soumission du formulaire
-                $('#ai-redactor-test-form').on('submit', function(e) {
+                $('#ai-connector-test-form').on('submit', function(e) {
                     // Ajouter un log pour voir si l'événement est bien capturé
                     console.log('Formulaire soumis - Début du traitement');
-                    ai_agent_log('Formulaire soumis via JavaScript', 'info');
+                    ai_connector_log('Formulaire soumis via JavaScript', 'info');
 
                     if ($('#test_prompt').val().trim() !== '') {
-                        $('#ai-redactor-test-submit').attr('disabled', 'disabled');
-                        $('#ai-redactor-loading').show();
+                        $('#ai-connector-test-submit').attr('disabled', 'disabled');
+                        $('#ai-connector-loading').show();
 
                         // Faire défiler jusqu'au bouton de soumission pour montrer le chargement
                         $('html, body').animate({
-                            scrollTop: $('#ai-redactor-loading').offset().top - 100
+                            scrollTop: $('#ai-connector-loading').offset().top - 100
                         }, 500);
 
                         // S'assurer que le formulaire est bien soumis
@@ -614,9 +610,9 @@ class AI_Redactor_Admin_Tester
 
                         // Ajouter une validation pour s'assurer que le spinner ne tourne pas indéfiniment
                         setTimeout(function() {
-                            if ($('#ai-redactor-loading').is(':visible')) {
-                                $('#ai-redactor-loading').hide();
-                                $('#ai-redactor-test-submit').removeAttr('disabled');
+                            if ($('#ai-connector-loading').is(':visible')) {
+                                $('#ai-connector-loading').hide();
+                                $('#ai-connector-test-submit').removeAttr('disabled');
                                 console.log('Timeout atteint - Arrêt du spinner');
                             }
                         }, 30000); // 30 secondes de timeout comme sécurité
@@ -632,14 +628,14 @@ class AI_Redactor_Admin_Tester
                 });
 
                 // Si la page est rechargée avec un résultat, masquer le spinner
-                if ($('.ai-redactor-test-response').length > 0) {
-                    $('#ai-redactor-loading').hide();
-                    $('#ai-redactor-test-submit').removeAttr('disabled');
+                if ($('.ai-connector-test-response').length > 0) {
+                    $('#ai-connector-loading').hide();
+                    $('#ai-connector-test-submit').removeAttr('disabled');
                     console.log('Résultat détecté - Spinner masqué');
                 }
 
                 // Ajouter un gestionnaire de clic direct sur le bouton pour s'assurer qu'il fonctionne
-                $('#ai-redactor-test-submit').on('click', function(e) {
+                $('#ai-connector-test-submit').on('click', function(e) {
                     console.log('Clic direct sur le bouton de soumission');
                     var formIsValid = $('#test_prompt').val().trim() !== '';
 
@@ -678,7 +674,7 @@ class AI_Redactor_Admin_Tester
         $providers_config = require dirname(dirname(__FILE__)) . '/services/ai/providers-config.php';
 
         // Récupérer le modèle actif (format provider:model)
-        $active_model = get_option('ai_agent_active_model', '');
+        $active_model = ai_connector_get_active_model_string();
 
         if (!empty($active_model)) {
             $parts = explode(':', $active_model);
@@ -703,4 +699,8 @@ class AI_Redactor_Admin_Tester
 
         return $info;
     }
+}
+
+if (!class_exists('AI_Redactor_Admin_Tester', false)) {
+    class_alias('AI_Connector_Admin_Tester', 'AI_Redactor_Admin_Tester');
 }

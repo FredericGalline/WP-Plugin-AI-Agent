@@ -51,7 +51,7 @@ class AI_Anthropic_API
     public static function send_request($prompt, $model, $api_key)
     {
         if (defined('AI_AGENT_DEBUG') && AI_AGENT_DEBUG) {
-            ai_agent_log('Configuration de la requête Anthropic - Modèle: ' . $model, 'debug');
+            ai_connector_log('Configuration de la requête Anthropic - Modèle: ' . $model, 'debug');
         }
 
         $api_url = 'https://api.anthropic.com/v1/messages';
@@ -84,7 +84,7 @@ class AI_Anthropic_API
         if (is_wp_error($response)) {
             $error_message = $response->get_error_message();
             if (defined('AI_AGENT_DEBUG') && AI_AGENT_DEBUG) {
-                ai_agent_log('Erreur API Anthropic : ' . $error_message, 'error');
+                ai_connector_log('Erreur API Anthropic : ' . $error_message, 'error');
             }
 
             return [
@@ -98,40 +98,38 @@ class AI_Anthropic_API
         $response_body = wp_remote_retrieve_body($response);
         $response_data = json_decode($response_body, true);
 
+        if (!is_array($response_data)) {
+            return [
+                'success' => false,
+                'response' => null,
+                'error' => 'Réponse JSON invalide de l\'API',
+            ];
+        }
+
         if ($response_code !== 200) {
-            $error_message = $response_data['error']['message'] ?? "Erreur inconnue (code $response_code)";
-            if (defined('AI_AGENT_DEBUG') && AI_AGENT_DEBUG) {
-                ai_agent_log('Erreur API Anthropic : ' . $error_message, 'error');
-            }
+            $error_message = isset($response_data['error']['message'])
+                ? $response_data['error']['message']
+                : "Erreur inconnue (code $response_code)";
 
             return [
                 'success' => false,
-                'response' => $response_data,
+                'response' => null,
                 'error' => "Erreur API : $error_message",
             ];
         }
 
         if (isset($response_data['content'][0]['text'])) {
-            $content = $response_data['content'][0]['text'];
-            if (defined('AI_AGENT_DEBUG') && AI_AGENT_DEBUG) {
-                ai_agent_log('Réponse Anthropic reçue avec succès.', 'info');
-            }
-
             return [
                 'success' => true,
-                'response' => $content,
+                'response' => $response_data['content'][0]['text'],
                 'error' => null,
             ];
-        } else {
-            if (defined('AI_AGENT_DEBUG') && AI_AGENT_DEBUG) {
-                ai_agent_log('Format de réponse inattendu : ' . $response_body, 'warning');
-            }
-
-            return [
-                'success' => false,
-                'response' => $response_data,
-                'error' => 'Format de réponse inattendu.',
-            ];
         }
+
+        return [
+            'success' => false,
+            'response' => null,
+            'error' => 'Format de réponse inattendu.',
+        ];
     }
 }

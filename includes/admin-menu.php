@@ -1,12 +1,12 @@
 <?php
 
 /**
- * Admin menu pour le plugin AI Agent
+ * Admin menu pour le plugin AI Connector
  *
  * Ce fichier gère uniquement la structure du menu d'administration
  * et les inclusions des différentes pages.
  *
- * @package WP_Plugin_AI_Agent
+ * @package WP_Plugin_AI_Connector
  */
 
 // Empêcher l'accès direct au fichier
@@ -15,67 +15,67 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Enregistre les menus et sous-menus pour le plugin AI Agent
+ * Enregistre les menus et sous-menus pour le plugin AI Connector
  */
-function ai_agent_register_admin_menus()
+function ai_connector_register_admin_menus()
 {
     // Menu principal
     add_menu_page(
-        __('AI Agent', 'ai-agent'),
-        __('AI Agent', 'ai-agent'),
+        __('AI Connector', 'ai-connector'),
+        __('AI Connector', 'ai-connector'),
         'manage_options',
-        'ai-agent',
-        'ai_agent_render_dashboard_page',
-        'dashicons-robot',
+        'ai-connector',
+        'ai_connector_render_dashboard_page',
+        'dashicons-admin-links',
         80
     );
 
     // Sous-menu : Tableau de bord (duplique le menu principal pour clarté)
     add_submenu_page(
-        'ai-agent',
-        __('Tableau de bord', 'ai-agent'),
-        __('Tableau de bord', 'ai-agent'),
+        'ai-connector',
+        __('Tableau de bord', 'ai-connector'),
+        __('Tableau de bord', 'ai-connector'),
         'manage_options',
-        'ai-agent',
-        'ai_agent_render_dashboard_page'
+        'ai-connector',
+        'ai_connector_render_dashboard_page'
     );
 
     // Sous-menu : Connecteurs IA
     add_submenu_page(
-        'ai-agent',
-        __('Connecteurs IA', 'ai-agent'),
-        __('Connecteurs IA', 'ai-agent'),
+        'ai-connector',
+        __('Connecteurs IA', 'ai-connector'),
+        __('Connecteurs IA', 'ai-connector'),
         'manage_options',
-        'ai-agent-connectors',
-        'ai_agent_render_connectors_page'
+        'ai-connector-connectors',
+        'ai_connector_render_connectors_page'
     );
 
     // Sous-menu : Testeur de Prompt IA
     add_submenu_page(
-        'ai-agent',
-        __('Testeur de Prompt IA', 'ai-agent'),
-        __('Testeur IA', 'ai-agent'),
+        'ai-connector',
+        __('Testeur de Prompt IA', 'ai-connector'),
+        __('Testeur IA', 'ai-connector'),
         'manage_options',
-        'ai-agent-tester',
-        'ai_agent_render_tester_page'
+        'ai-connector-tester',
+        'ai_connector_render_tester_page'
     );
 
     // Sous-menu : Diagnostic IA
     add_submenu_page(
-        'ai-agent',
-        __('Diagnostic IA', 'ai-agent'),
-        __('Diagnostic IA', 'ai-agent'),
+        'ai-connector',
+        __('Diagnostic IA', 'ai-connector'),
+        __('Diagnostic IA', 'ai-connector'),
         'manage_options',
-        'ai-agent-diagnostic',
-        'ai_agent_render_diagnostic_page'
+        'ai-connector-diagnostic',
+        'ai_connector_render_diagnostic_page'
     );
 }
-add_action('admin_menu', 'ai_agent_register_admin_menus');
+add_action('admin_menu', 'ai_connector_register_admin_menus');
 
 /**
  * Rendu de la page Tableau de bord
  */
-function ai_agent_render_dashboard_page()
+function ai_connector_render_dashboard_page()
 {
     // Pour cette page, inclure simplement le fichier car il gère son propre affichage
     require_once plugin_dir_path(__FILE__) . '/../admin/dashboard.php';
@@ -84,43 +84,43 @@ function ai_agent_render_dashboard_page()
 /**
  * Rendu de la page Connecteurs IA
  */
-function ai_agent_render_connectors_page()
+function ai_connector_render_connectors_page()
 {
-    // Pour cette page, nous devons appeler la méthode statique de la classe AI_Agent_Admin_Form
     require_once plugin_dir_path(__FILE__) . '/../admin/models-form.php';
 
-    // Récupérer la configuration des fournisseurs
-    $providers_config = require_once plugin_dir_path(__FILE__) . '/../services/ai/providers-config.php';
+    $providers_config = ai_connector_get_providers_config();
 
-    // Récupérer le modèle actif
-    $active_model = get_option('ai_agent_active_model', '');
+    $active_model = ai_connector_get_active_model_string();
 
-    // Appeler la méthode de rendu du formulaire
-    AI_Agent_Admin_Form::render_form($providers_config, $active_model);
+    echo '<div class="wrap ai-connector-admin">';
+    echo '<h1>' . esc_html__('Connecteurs IA', 'ai-connector') . '</h1>';
+    echo '<p class="description">' . esc_html__('Configurez vos fournisseurs d\'IA et choisissez le modèle actif.', 'ai-connector') . '</p>';
+
+    settings_errors('ai_connector_connectors');
+
+    AI_Connector_Admin_Form::render_form($providers_config, $active_model);
+
+    echo '</div>';
 }
 
 /**
  * Rendu de la page Testeur de Prompt IA
  */
-function ai_agent_render_tester_page()
+function ai_connector_render_tester_page()
 {
-    // Inclure le bon fichier depuis le dossier admin
     require_once plugin_dir_path(__FILE__) . '/../admin/tester.php';
 
-    // Instancier la classe et appeler sa méthode de rendu
-    $tester = new AI_Redactor_Admin_Tester();
+    $tester = new AI_Connector_Admin_Tester();
     $tester->render_tester_page();
 }
 
 /**
  * Rendu de la page Diagnostic IA
  */
-function ai_agent_render_diagnostic_page()
+function ai_connector_render_diagnostic_page()
 {
-    // Charger le fichier de diagnostic
     require_once plugin_dir_path(__FILE__) . '/../admin/diagnostic.php';
 
-    // Instancier la classe et appeler sa méthode de rendu
-    $diagnostic = new AI_Redactor_Admin_Diagnostic();
+    $diagnostic = new AI_Connector_Admin_Diagnostic();
     $diagnostic->render_diagnostic_page();
 }

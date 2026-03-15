@@ -37,7 +37,7 @@ if (!defined('ABSPATH')) {
 /**
  * Classe pour la page de diagnostic des APIs d'IA
  */
-class AI_Redactor_Admin_Diagnostic
+class AI_Connector_Admin_Diagnostic
 {
     /**
      * Le prompt standard à envoyer à tous les modèles
@@ -94,7 +94,7 @@ class AI_Redactor_Admin_Diagnostic
     private function log($message)
     {
         // Utiliser la fonction de journalisation de l'agent AI au lieu de AI_REDACTOR_DEBUG
-        ai_agent_log($message, 'debug');
+        ai_connector_log($message, 'debug');
     }
 
     /**
@@ -133,9 +133,9 @@ class AI_Redactor_Admin_Diagnostic
         $result['api_key_status'] = 'ok';
 
         // Définir le modèle actif temporairement pour le test
-        $active_model_backup = get_option('ai_agent_active_model', '');
+        $active_model_backup = ai_connector_get_active_model_string();
         $test_model = $provider_id . ':' . $model_id;
-        update_option('ai_agent_active_model', $test_model);
+        ai_connector_set_active_model($test_model);
 
         $this->log("Test du modèle: " . $test_model);
         $this->log("Prompt: " . $this->test_prompt);
@@ -171,7 +171,7 @@ class AI_Redactor_Admin_Diagnostic
         }
 
         // Restaurer le modèle actif
-        update_option('ai_agent_active_model', $active_model_backup);
+        ai_connector_set_active_model($active_model_backup);
 
         return $result;
     }
@@ -252,7 +252,7 @@ class AI_Redactor_Admin_Diagnostic
 
         // Afficher l'interface
 ?>
-        <div class="wrap ai-redactor-wrap">
+        <div class="wrap ai-connector-wrap">
             <h1><?php echo esc_html__('Diagnostic IA', 'ai-redactor'); ?></h1>
 
             <?php settings_errors('ai_redactor_diagnostic'); ?>
@@ -267,7 +267,7 @@ class AI_Redactor_Admin_Diagnostic
                     <div class="ai-dashboard-row">
                         <!-- Colonne principale -->
                         <div class="ai-dashboard-column main">
-                            <div class="ai-redactor-card ai-welcome-card">
+                            <div class="ai-connector-card ai-welcome-card">
                                 <div class="ai-card-icon">
                                     <span class="dashicons dashicons-superhero"></span>
                                 </div>
@@ -292,8 +292,8 @@ class AI_Redactor_Admin_Diagnostic
                             </div>
 
                             <!-- Explication des tests -->
-                            <div class="ai-redactor-card">
-                                <div class="ai-redactor-card-header">
+                            <div class="ai-connector-card">
+                                <div class="ai-connector-card-header">
                                     <h2>
                                         <span class="dashicons dashicons-info-outline"></span>
                                         <?php echo esc_html__('À propos du diagnostic', 'ai-redactor'); ?>
@@ -368,7 +368,7 @@ class AI_Redactor_Admin_Diagnostic
                             }, $api_status));
 
                             $total_providers = count($api_status);
-                            $active_model = get_option('ai_agent_active_model', '');
+                            $active_model = ai_connector_get_active_model_string();
                             $active_provider = '';
                             $active_model_name = '';
 
@@ -385,8 +385,8 @@ class AI_Redactor_Admin_Diagnostic
                             ?>
 
                             <!-- État des fournisseurs -->
-                            <div class="ai-redactor-card">
-                                <div class="ai-redactor-card-header">
+                            <div class="ai-connector-card">
+                                <div class="ai-connector-card-header">
                                     <h2>
                                         <span class="dashicons dashicons-chart-pie"></span>
                                         <?php echo esc_html__('État des API', 'ai-redactor'); ?>
@@ -441,8 +441,8 @@ class AI_Redactor_Admin_Diagnostic
                             </div>
 
                             <!-- Astuces et aide -->
-                            <div class="ai-redactor-card ai-tips-card">
-                                <div class="ai-redactor-card-header">
+                            <div class="ai-connector-card ai-tips-card">
+                                <div class="ai-connector-card-header">
                                     <h2>
                                         <span class="dashicons dashicons-lightbulb"></span>
                                         <?php echo esc_html__('Conseils', 'ai-redactor'); ?>
@@ -461,8 +461,8 @@ class AI_Redactor_Admin_Diagnostic
                 </div>
             <?php else: ?>
                 <!-- Affichage des résultats des tests -->
-                <div class="ai-redactor-card">
-                    <div class="ai-redactor-card-header">
+                <div class="ai-connector-card">
+                    <div class="ai-connector-card-header">
                         <h2><?php echo esc_html__('Tester tous les modèles', 'ai-redactor'); ?></h2>
                     </div>
 
@@ -487,8 +487,8 @@ class AI_Redactor_Admin_Diagnostic
                 </div>
 
                 <?php if (empty($test_results)): ?>
-                    <div class="ai-redactor-card">
-                        <div class="ai-redactor-card-header">
+                    <div class="ai-connector-card">
+                        <div class="ai-connector-card-header">
                             <h2><?php echo esc_html__('État actuel', 'ai-redactor'); ?></h2>
                         </div>
                         <p>
@@ -496,10 +496,10 @@ class AI_Redactor_Admin_Diagnostic
                         </p>
                     </div>
                 <?php else: ?>
-                    <div class="ai-redactor-card">
-                        <div class="ai-redactor-card-header">
+                    <div class="ai-connector-card">
+                        <div class="ai-connector-card-header">
                             <h2><?php echo esc_html__('Résultats des tests', 'ai-redactor'); ?></h2>
-                            <div class="ai-redactor-card-actions">
+                            <div class="ai-connector-card-actions">
                                 <button id="copy-results-btn" class="button button-secondary">
                                     <span class="dashicons dashicons-clipboard"></span>
                                     <?php echo esc_html__('Copier les résultats', 'ai-redactor'); ?>
@@ -753,9 +753,9 @@ class AI_Redactor_Admin_Diagnostic
                     </div>
                 <?php endif; ?>
 
-                <?php if (function_exists('ai_agent_get_debug_mode') && ai_agent_get_debug_mode()): ?>
-                    <div class="ai-redactor-card">
-                        <div class="ai-redactor-card-header">
+                <?php if (function_exists('ai_connector_get_debug_mode') && ai_connector_get_debug_mode()): ?>
+                    <div class="ai-connector-card">
+                        <div class="ai-connector-card-header">
                             <h2><?php echo esc_html__('Informations de diagnostic', 'ai-redactor'); ?></h2>
                         </div>
 
@@ -791,4 +791,8 @@ class AI_Redactor_Admin_Diagnostic
         </div>
 <?php
     }
+}
+
+if (!class_exists('AI_Redactor_Admin_Diagnostic', false)) {
+    class_alias('AI_Connector_Admin_Diagnostic', 'AI_Redactor_Admin_Diagnostic');
 }

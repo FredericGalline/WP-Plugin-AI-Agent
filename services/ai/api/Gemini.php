@@ -51,7 +51,7 @@ class AI_Gemini_API
     public static function send_request($prompt, $model, $api_key)
     {
         if (defined('AI_AGENT_DEBUG') && AI_AGENT_DEBUG) {
-            ai_agent_log('Configuration de la requête Gemini - Modèle: ' . $model, 'debug');
+            ai_connector_log('Configuration de la requête Gemini - Modèle: ' . $model, 'debug');
         }
 
         $api_url = 'https://generativelanguage.googleapis.com/v1beta/models/' . urlencode($model) . ':generateContent';
@@ -85,7 +85,7 @@ class AI_Gemini_API
         if (is_wp_error($response)) {
             $error_message = $response->get_error_message();
             if (defined('AI_AGENT_DEBUG') && AI_AGENT_DEBUG) {
-                error_log("[AI Redactor] Erreur API Gemini : $error_message");
+                ai_connector_log('Erreur API Gemini : ' . $error_message, 'error');
             }
 
             return [
@@ -99,44 +99,41 @@ class AI_Gemini_API
         $response_body = wp_remote_retrieve_body($response);
         $response_data = json_decode($response_body, true);
 
+        if (!is_array($response_data)) {
+            return [
+                'success' => false,
+                'response' => null,
+                'error' => 'Réponse JSON invalide de l\'API'
+            ];
+        }
+
         if ($response_code !== 200) {
-            $error_message = $response_data['error']['message'] ?? "Erreur inconnue (code $response_code)";
+            $error_message = isset($response_data['error']['message'])
+                ? $response_data['error']['message']
+                : "Erreur inconnue (code $response_code)";
             if (defined('AI_AGENT_DEBUG') && AI_AGENT_DEBUG) {
-                error_log("[AI Redactor] Erreur API Gemini : $error_message");
+                ai_connector_log('Erreur API Gemini : ' . $error_message, 'error');
             }
 
             return [
                 'success' => false,
-                'response' => $response_data,
+                'response' => null,
                 'error' => 'Erreur API : ' . $error_message
             ];
         }
 
-        // Récupérer la réponse textuelle
-        if (
-            isset($response_data['candidates'][0]['content']['parts'][0]['text'])
-        ) {
-            $content = $response_data['candidates'][0]['content']['parts'][0]['text'];
-
-            if (defined('AI_AGENT_DEBUG') && AI_AGENT_DEBUG) {
-                error_log('[AI Redactor] Réponse Gemini reçue avec succès.');
-            }
-
+        if (isset($response_data['candidates'][0]['content']['parts'][0]['text'])) {
             return [
                 'success' => true,
-                'response' => $content,
+                'response' => $response_data['candidates'][0]['content']['parts'][0]['text'],
                 'error' => null
             ];
-        } else {
-            if (defined('AI_AGENT_DEBUG') && AI_AGENT_DEBUG) {
-                error_log('[AI Redactor] Format de réponse Gemini inattendu : ' . $response_body);
-            }
-
-            return [
-                'success' => false,
-                'response' => $response_data,
-                'error' => 'Format de réponse inattendu'
-            ];
         }
+
+        return [
+            'success' => false,
+            'response' => null,
+            'error' => 'Format de réponse inattendu'
+        ];
     }
 }

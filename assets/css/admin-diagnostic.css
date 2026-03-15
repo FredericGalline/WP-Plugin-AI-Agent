@@ -1,4 +1,4 @@
-/* Styles pour la page de diagnostic AI Agent
+/* Styles pour la page de diagnostic AI Connector
  * Ce fichier contient les styles pour la page de diagnostic des API IA
  * Compatible avec les styles du fichier admin-models-form.css
  */
@@ -526,17 +526,17 @@
 }
 
 /* Compatibilité avec les styles de admin-models-form.css */
-.ai-redactor-wrap .ai-agent-form-row {
+.ai-redactor-wrap .ai-connector-form-row {
   margin-bottom: 24px;
 }
 
-.ai-redactor-wrap .ai-agent-form-row label {
+.ai-redactor-wrap .ai-connector-form-row label {
   display: block;
   margin-bottom: 6px;
   font-weight: 500;
 }
 
-.ai-redactor-wrap .ai-agent-tab-content h2 {
+.ai-redactor-wrap .ai-connector-tab-content h2 {
   display: flex;
   align-items: center;
   margin-top: 0;

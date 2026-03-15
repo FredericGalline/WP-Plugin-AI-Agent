@@ -1,12 +1,12 @@
 <?php
 
 /**
- * Classe de journalisation personnalisée pour WP Plugin AI Agent
+ * Classe de journalisation personnalisée pour WP Plugin AI Connector
  * 
  * Cette classe permet de journaliser les erreurs, avertissements et informations
  * dans un fichier local au plugin, rendant le débogage plus facile et plus propre.
  * 
- * @package WP_Plugin_AI_Agent
+ * @package WP_Plugin_AI_Connector
  */
 
 // Empêcher l'accès direct au fichier
@@ -18,7 +18,7 @@ if (!defined('ABSPATH')) {
  * @psalm-suppress UndefinedClass
  */
 
-class AI_Agent_Logger
+class AI_Connector_Logger
 {
     /**
      * Le chemin vers le fichier de log
@@ -52,7 +52,7 @@ class AI_Agent_Logger
     {
         // Si aucun fichier de log n'est spécifié, utiliser le fichier par défaut
         if (is_null($log_file)) {
-            $log_file = WP_PLUGIN_AI_AGENT_PATH . 'logs/ai-agent.log';
+            $log_file = WP_PLUGIN_AI_CONNECTOR_PATH . 'logs/ai-connector.log';
         }
 
         $this->log_file = $log_file;

@@ -1,216 +1,220 @@
-# AI Agent — API Reference
+# AI Connector API
 
-Public API for third-party plugins to send prompts to AI providers, check configuration, and discover available models.
+Reference de l'API publique exposee par `AI Connector`.
 
-**Facade class** : `AI_Agent_API`
-**Guard pattern** :
+## Facades disponibles
+
+Facade canonique:
 
 ```php
-if ( class_exists( 'AI_Agent_API' ) && AI_Agent_API::is_configured() ) {
-    // AI is ready to use
-}
+AI_Connector_API
 ```
 
----
-
-## Methods
-
-### `is_configured(): bool`
-
-Checks if an AI provider is active and has a valid API key.
+Alias legacy conserve:
 
 ```php
-if ( AI_Agent_API::is_configured() ) {
-    // Safe to send prompts
-}
+AI_Connector_API
 ```
 
----
+Entre plugins WordPress, il faut privilegier cette API PHP. La REST API sert surtout aux clients externes.
 
-### `prompt( string $prompt, array $args = [] ): array`
+## Contrat de reponse
 
-Sends a prompt to the active AI provider and returns the response.
-
-**Parameters** :
-
-| Param     | Type   | Description                                                  |
-|-----------|--------|--------------------------------------------------------------|
-| `$prompt` | string | The prompt text to send                                      |
-| `$args`   | array  | Reserved for future use (temperature, max_tokens, format...) |
-
-**Return** :
+Toutes les methodes d'envoi de prompt retournent un tableau de cette forme:
 
 ```php
-// Success
 array(
-    'success'  => true,
-    'response' => 'The AI-generated text response...',
-    'error'    => '',
-)
-
-// Failure
-array(
-    'success'  => false,
-    'response' => null,
-    'error'    => 'Error description',
+    'success'  => true|false,
+    'response' => 'Texte genere' | null,
+    'error'    => 'Message d erreur' | null,
 )
 ```
 
-**Example** :
+Le connecteur peut ajouter des metadonnees internes plus tard, mais ce contrat minimal est la surface stable a consommer.
+
+## Methodes
+
+### `AI_Connector_API::is_configured(): bool`
+
+Retourne `true` si un fournisseur actif est defini et si sa cle API est disponible.
 
 ```php
-$result = AI_Agent_API::prompt(
-    'Rédige une description professionnelle de 3 lignes pour une boulangerie artisanale nommée "Au Pain Doré" située à Lyon.'
+if (class_exists('AI_Connector_API') && AI_Connector_API::is_configured()) {
+    // Le connecteur est pret.
+}
+```
+
+### `AI_Connector_API::prompt(string $prompt, array $args = array()): array`
+
+Envoie un prompt texte au connecteur.
+
+Arguments supportes par le coeur:
+- `provider`: surcharge ponctuelle du fournisseur
+- `model`: surcharge ponctuelle du modele
+- `active_model`: alternative au format `provider:model`
+
+Exemple:
+
+```php
+$result = AI_Connector_API::prompt(
+    'Resume ce texte en 5 points.',
+    array(
+        'provider' => 'anthropic',
+        'model' => 'claude-sonnet-4-20250514',
+    )
 );
-
-if ( $result['success'] ) {
-    update_post_meta( $post_id, '_pro_description', sanitize_textarea_field( $result['response'] ) );
-}
 ```
 
----
+### `AI_Connector_API::request(array $request): array`
 
-### `get_active_model(): array`
+Version structuree de `prompt()`.
 
-Returns the currently selected provider and model.
-
-```php
-$model = AI_Agent_API::get_active_model();
-// array( 'provider' => 'openai', 'model' => 'gpt-4.1' )
-```
-
----
-
-### `get_providers(): array`
-
-Returns all available AI providers and their models with metadata.
+Le tableau doit contenir au minimum:
 
 ```php
-$providers = AI_Agent_API::get_providers();
-/*
 array(
-    'openai' => array(
-        'name'           => 'OpenAI',
-        'api_key_option' => 'ai_redactor_openai_api_key',
-        'models'         => array(
-            'gpt-4.1' => array(
-                'label'       => 'GPT-4.1',
-                'description' => '...',
-                'max_tokens'  => 1000000,
-                'enabled'     => true,
-                'status'      => 'stable',
-            ),
-            // ...
-        ),
-    ),
-    'anthropic' => array( ... ),
-    'mistral'   => array( ... ),
-    'gemini'    => array( ... ),
-    'grok'      => array( ... ),
+    'prompt' => '...',
 )
-*/
 ```
 
----
-
-### `get_configured_providers(): array`
-
-Returns only the provider IDs that have a valid API key set.
+Exemple:
 
 ```php
-$ready = AI_Agent_API::get_configured_providers();
-// array( 'openai', 'anthropic' )
+$result = AI_Connector_API::request(
+    array(
+        'prompt' => 'Ecris un chapô de 2 phrases.',
+        'provider' => 'openai',
+        'model' => 'gpt-5-mini',
+    )
+);
 ```
 
----
+### `AI_Connector_API::get_active_model(): array`
 
-## Supported Providers
+Retourne le modele actif sous la forme:
 
-| Provider     | Models                                              | Status |
-|-------------|------------------------------------------------------|--------|
-| **OpenAI**   | GPT-4.1, GPT-4.1 Mini, GPT-4.1 Nano, GPT-4o, GPT-4o Mini, GPT-3.5 Turbo | Stable |
-| **Anthropic**| Claude 3 Opus, Claude 3.5 Haiku, Claude 3.7 Sonnet  | Stable |
-| **Mistral**  | Mistral Small, Medium, Large                         | Stable |
-| **Gemini**   | Gemini 1.5 Pro, Flash, Flash-8B                      | Stable |
-| **Grok**     | Grok 2, Grok 2 Latest, Grok 3 (Beta)                | Mixed  |
+```php
+array(
+    'provider' => 'openai',
+    'model' => 'gpt-5.1',
+)
+```
 
----
+Note de compatibilite:
+- si un ancien identifiant de modele est encore stocke en base, le connecteur le normalise automatiquement vers un modele valide du catalogue courant
 
-## Hooks
+### `AI_Connector_API::get_providers(): array`
 
-### Filters
+Retourne la configuration complete des fournisseurs et de leurs modeles, telle que definie dans `services/ai/providers-config.php`.
 
-| Filter                | Parameters          | Description                        |
-|-----------------------|---------------------|------------------------------------|
-| `ai_agent_api_prompt` | `$prompt`, `$args`  | Modify the prompt before sending   |
-| `ai_agent_rest_permission` | `$allowed`     | Control REST API endpoint access   |
+Cette methode est utile pour:
+- afficher un selecteur de fournisseur/modele
+- verifier qu'un modele existe encore
+- afficher des metadonnees d'UI
+
+La structure retournee n'est pas une API commerciale officielle des fournisseurs. C'est une structure applicative interne au connecteur.
+
+### `AI_Connector_API::get_configured_providers(): array`
+
+Retourne la liste des fournisseurs qui disposent d'une cle API configuree.
+
+```php
+$providers = AI_Connector_API::get_configured_providers();
+```
+
+## Hooks et filtres
+
+### Filtres
+
+Avant envoi du prompt:
+
+```php
+ai_connector_api_prompt
+ai_connector_api_prompt
+```
+
+Exemple:
+
+```php
+add_filter('ai_connector_api_prompt', function ($prompt, $args) {
+    return "[Contexte site]\n" . $prompt;
+}, 10, 2);
+```
+
+Permissions REST:
+
+```php
+ai_connector_rest_permission
+ai_connector_rest_permission
+```
 
 ### Actions
 
-| Action                          | Parameters                    | Description                     |
-|---------------------------------|-------------------------------|---------------------------------|
-| `ai_agent_api_prompt_completed` | `$result`, `$prompt`, `$args` | Fires after a prompt is processed |
+Apres traitement d'un prompt:
 
----
+```php
+ai_connector_api_prompt_completed
+ai_connector_api_prompt_completed
+```
+
+Exemple:
+
+```php
+add_action('ai_connector_api_prompt_completed', function ($result, $prompt, $args) {
+    // Observabilite, logs, analytics...
+}, 10, 3);
+```
 
 ## REST API
 
-The plugin also exposes a REST endpoint for external integrations :
+Routes disponibles:
 
-```
-POST /wp-json/ai-agent/v1/prompt
+```text
+POST /wp-json/ai-connector/v1/prompt
+POST /wp-json/ai-connector/v1/prompt
 ```
 
-**Request body** :
+Format de requete:
 
 ```json
 {
-    "prompt": "Explain quantum computing in 2 sentences.",
-    "args": {
-        "temperature": 0.7
-    }
+  "prompt": "Explique ce texte en 3 phrases.",
+  "args": {
+    "provider": "openai",
+    "model": "gpt-5-mini"
+  }
 }
 ```
 
-**Response** :
+Par defaut, l'acces requiert `manage_options`.
 
-```json
-{
-    "success": true,
-    "response": "Quantum computing uses quantum bits..."
-}
-```
+Documentation detaillee:
+- [services/documentantion/rest-api.md](services/documentantion/rest-api.md)
 
-**Authentication** : requires `manage_options` capability by default. Customizable via the `ai_agent_rest_permission` filter.
-
----
-
-## Integration Example (CityPro Auto-Description)
+## Exemple d'integration dans un plugin metier
 
 ```php
-// Generate a business description from SIRENE data
-function citypro_generate_description( $post_id ) {
-    if ( ! class_exists( 'AI_Agent_API' ) || ! AI_Agent_API::is_configured() ) {
+function citypro_generate_description($post_id)
+{
+    if (!class_exists('AI_Connector_API') || !AI_Connector_API::is_configured()) {
         return;
     }
 
-    $name     = get_the_title( $post_id );
-    $activity = wp_get_post_terms( $post_id, 'activite', array( 'fields' => 'names' ) );
-    $city     = get_post_meta( $post_id, '_city', true );
-
     $prompt = sprintf(
-        'Rédige une description professionnelle de 4-5 lignes pour l\'entreprise "%s", '
-        . 'secteur d\'activité : %s, située à %s. '
-        . 'Ton professionnel, factuel, sans superlatifs.',
-        $name,
-        implode( ', ', $activity ),
-        $city
+        'Redige une description professionnelle de 4 lignes pour "%s".',
+        get_the_title($post_id)
     );
 
-    $result = AI_Agent_API::prompt( $prompt );
+    $result = AI_Connector_API::prompt($prompt);
 
-    if ( $result['success'] ) {
-        update_post_meta( $post_id, '_pro_description', sanitize_textarea_field( $result['response'] ) );
+    if (!empty($result['success']) && !empty($result['response'])) {
+        update_post_meta($post_id, '_citypro_ai_description', sanitize_textarea_field($result['response']));
     }
 }
 ```
+
+## Regles de maintenance
+
+- toute nouvelle integration interne doit cibler `AI_Connector_API`
+- ne documentez pas les modeles exacts dans plusieurs fichiers: le catalogue vit dans `services/ai/providers-config.php`
+- si vous remappez un ancien modele, documentez l'alias dans `includes/ai-connector-functions.php`

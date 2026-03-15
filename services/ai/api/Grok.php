@@ -44,7 +44,7 @@ class AI_Grok_API
     public static function send_request($prompt, $model, $api_key)
     {
         if (defined('AI_AGENT_DEBUG') && AI_AGENT_DEBUG) {
-            ai_agent_log('Configuration de la requête Grok - Modèle: ' . $model, 'debug');
+            ai_connector_log('Configuration de la requête Grok - Modèle: ' . $model, 'debug');
         }
 
         $api_url = 'https://api.x.ai/v1/chat/completions';
@@ -89,11 +89,21 @@ class AI_Grok_API
         $body = wp_remote_retrieve_body($response);
         $data = json_decode($body, true);
 
-        if ($code !== 200 || !isset($data['choices'][0]['message']['content'])) {
-            $error_message = $data['error']['message'] ?? "Erreur inconnue (code $code)";
+        if (!is_array($data)) {
             return [
                 'success'  => false,
-                'response' => $data,
+                'response' => null,
+                'error'    => 'Réponse JSON invalide de l\'API'
+            ];
+        }
+
+        if ($code !== 200 || !isset($data['choices'][0]['message']['content'])) {
+            $error_message = isset($data['error']['message'])
+                ? $data['error']['message']
+                : "Erreur inconnue (code $code)";
+            return [
+                'success'  => false,
+                'response' => null,
                 'error'    => 'Erreur API : ' . $error_message
             ];
         }

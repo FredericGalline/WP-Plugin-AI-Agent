@@ -8,7 +8,7 @@
  * l'envoi des prompts et la réception des réponses, en fonction du fournisseur et du modèle
  * actuellement sélectionnés dans les paramètres du plugin.
  *
- * @package WP_Plugin_AI_Agent
+ * @package WP_Plugin_AI_Connector
  * @subpackage Services\AI\Core
  *
  * @depends WordPress Options API
@@ -25,143 +25,176 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-/**
- * Classe pour gérer les requêtes vers les API d'IA
- */
-class AI_Request_Handler
+class AI_Connector_Request_Handler
 {
+    /**
+     * Parse un modele combine provider:model.
+     *
+     * @param string $combined Modele combine.
+     * @return array{provider:string,model:string}
+     */
+    private static function parse_active_model($combined)
+    {
+        $combined = is_string($combined) ? trim($combined) : '';
+
+        if ('' === $combined) {
+            return array(
+                'provider' => '',
+                'model' => '',
+            );
+        }
+
+        $parts = explode(':', $combined, 2);
+
+        if (2 !== count($parts)) {
+            return array(
+                'provider' => '',
+                'model' => '',
+            );
+        }
+
+        return array(
+            'provider' => $parts[0],
+            'model' => $parts[1],
+        );
+    }
+
     /**
      * Envoie un prompt au modèle d'IA actuellement sélectionné.
      *
      * @param string $prompt Le texte du prompt à envoyer à l'IA.
+     * @param array  $args   Arguments optionnels pour surcharger le fournisseur ou le modele.
      * @return array Tableau avec statut de succès, réponse et éventuelle erreur.
      */
-    public static function send_prompt($prompt)
+    public static function send_prompt($prompt, $args = array())
     {
-        // Journaliser le début de la requête
-        ai_agent_log('*** DÉBUT DE LA REQUÊTE ***', 'info');
-        ai_agent_log('Prompt reçu pour traitement - Longueur: ' . strlen($prompt) . ' caractères', 'debug');
+        $prompt = is_string($prompt) ? trim($prompt) : '';
 
-        // Récupérer la configuration des fournisseurs disponibles
-        $providers_config = require dirname(dirname(__FILE__)) . '/providers-config.php';
-
-        // Récupérer le fournisseur et le modèle actifs (nouveau format: provider:model)
-        $active_model_combined = get_option('ai_agent_active_model', '');
-        ai_agent_log('Modèle actif configuré: ' . $active_model_combined, 'info');
-
-        $active_provider = '';
-        $active_model = '';
-
-        if (!empty($active_model_combined)) {
-            $parts = explode(':', $active_model_combined);
-            if (count($parts) === 2) {
-                $active_provider = $parts[0];
-                $active_model = $parts[1];
-            }
+        if ('' === $prompt) {
+            return array(
+                'success' => false,
+                'response' => null,
+                'error' => __('Le prompt est vide.', 'ai-connector'),
+            );
         }
 
-        // Journaliser les informations sur le modèle actif
-        ai_agent_log('Tentative d\'envoi de prompt à ' . $active_model_combined, 'info');
-        ai_agent_log('Fournisseur extrait: ' . $active_provider, 'debug');
-        ai_agent_log('Modèle extrait: ' . $active_model, 'debug');
+        ai_connector_log('*** DEBUT DE LA REQUETE ***', 'info');
+        ai_connector_log('Prompt recu pour traitement - Longueur: ' . strlen($prompt) . ' caracteres', 'debug');
 
-        // Vérifier si les informations de fournisseur et modèle sont valides
-        if (isset($providers_config[$active_provider])) {
-            ai_agent_log('Fournisseur trouvé dans la config', 'debug');
+        $providers_config = ai_connector_get_providers_config();
 
-            if (isset($providers_config[$active_provider]['models'][$active_model])) {
-                ai_agent_log('Modèle trouvé dans la config', 'debug');
-            } else {
-                ai_agent_log('Modèle NON trouvé dans la config. Modèles disponibles: ' .
-                    implode(', ', array_keys($providers_config[$active_provider]['models'])), 'warning');
-            }
+        $active_model_info = array(
+            'provider' => '',
+            'model' => '',
+        );
+
+        if (!empty($args['provider']) && !empty($args['model'])) {
+            $active_model_info['provider'] = sanitize_key((string) $args['provider']);
+            $active_model_info['model'] = sanitize_text_field((string) $args['model']);
+        } elseif (!empty($args['active_model'])) {
+            $active_model_info = self::parse_active_model((string) $args['active_model']);
         } else {
-            ai_agent_log('Fournisseur NON trouvé dans la config. Fournisseurs disponibles: ' .
-                implode(', ', array_keys($providers_config)), 'warning');
+            $active_model_info = ai_connector_get_active_model();
         }
 
-        // Si le format combiné n'est pas utilisé, utiliser l'ancienne méthode
+        $active_provider = $active_model_info['provider'];
+        $active_model = $active_model_info['model'];
+        $active_model_combined = '' !== $active_provider && '' !== $active_model
+            ? $active_provider . ':' . $active_model
+            : '';
+
         if (empty($active_provider) || empty($active_model)) {
-            $active_provider = get_option('ai_redactor_active_provider', '');
-            $active_model = get_option('ai_redactor_' . $active_provider . '_active_model', '');
-
-            ai_agent_log('Méthode alternative - Fournisseur: ' . $active_provider, 'debug');
-            ai_agent_log('Méthode alternative - Modèle: ' . $active_model, 'debug');
+            $active_provider = (string) get_option('ai_redactor_active_provider', '');
+            $active_model = (string) get_option('ai_redactor_' . $active_provider . '_active_model', '');
+            $active_model_combined = '' !== $active_provider && '' !== $active_model
+                ? $active_provider . ':' . $active_model
+                : '';
         }
 
-        // Vérifier si le fournisseur est valide
+        ai_connector_log('Modele actif configure: ' . $active_model_combined, 'info');
+        ai_connector_log('Fournisseur extrait: ' . $active_provider, 'debug');
+        ai_connector_log('Modele extrait: ' . $active_model, 'debug');
+
         if (empty($active_provider) || !isset($providers_config[$active_provider])) {
-            ai_agent_log('Erreur: Fournisseur non valide ou non configuré', 'error');
+            ai_connector_log('Erreur: Fournisseur non valide ou non configure', 'error');
 
-            return [
+            return array(
                 'success' => false,
                 'response' => null,
-                'error' => 'Aucun fournisseur d\'IA valide sélectionné. Veuillez en configurer un dans les paramètres d\'AI Agent.'
-            ];
+                'error' => __('Aucun fournisseur d\'IA valide selectionne. Veuillez en configurer un dans AI Connector.', 'ai-connector'),
+            );
         }
 
-        // Vérifier si le modèle est valide
         if (empty($active_model) || !isset($providers_config[$active_provider]['models'][$active_model])) {
-            ai_agent_log('Erreur: Modèle non valide ou non configuré', 'error');
+            ai_connector_log('Erreur: Modele non valide ou non configure', 'error');
 
-            return [
+            return array(
                 'success' => false,
                 'response' => null,
-                'error' => 'Aucun modèle valide sélectionné pour ' . $providers_config[$active_provider]['name'] . '. Veuillez en sélectionner un dans les paramètres d\'AI Agent.'
-            ];
+                'error' => sprintf(
+                    __('Aucun modele valide selectionne pour %s. Veuillez en choisir un dans AI Connector.', 'ai-connector'),
+                    $providers_config[$active_provider]['name']
+                ),
+            );
         }
 
-        // Récupérer la clé API
-        $api_key_option = $providers_config[$active_provider]['api_key_option'];
-        $api_key = get_option($api_key_option);
-
-        // Vérifier si la clé API est disponible
+        $api_key = ai_connector_get_provider_api_key($active_provider);
         if (empty($api_key)) {
-            return [
+            return array(
                 'success' => false,
                 'response' => null,
-                'error' => 'Clé API non configurée pour ' . $providers_config[$active_provider]['name'] . '. Veuillez l\'ajouter dans les paramètres d\'AI Agent.'
-            ];
+                'error' => sprintf(
+                    __('Cle API non configuree pour %s. Veuillez l\'ajouter dans AI Connector.', 'ai-connector'),
+                    $providers_config[$active_provider]['name']
+                ),
+            );
         }
 
-        // Précharger toutes les classes d'API pour éviter des require_once répétitifs
-        $api_file_map = [
+        $api_file_map = array(
             'openai' => 'OpenAI.php',
             'anthropic' => 'Anthropic.php',
             'mistral' => 'Mistral.php',
             'google' => 'Gemini.php',
             'gemini' => 'Gemini.php',
-            'grok' => 'Grok.php'
-        ];
+            'grok' => 'Grok.php',
+        );
 
-        // Valider que le fichier API existe pour ce fournisseur
         if (!isset($api_file_map[$active_provider])) {
-            return [
+            return array(
                 'success' => false,
                 'response' => null,
-                'error' => 'Aucune implémentation trouvée pour le fournisseur: ' . $active_provider
-            ];
+                'error' => sprintf(__('Aucune implementation trouvee pour le fournisseur: %s', 'ai-connector'), $active_provider),
+            );
         }
 
-        // Charger le fichier API correspondant
         $api_file = $api_file_map[$active_provider];
-        require_once __DIR__ . '/../api/' . $api_file;
+        $api_file_path = __DIR__ . '/../api/' . $api_file;
+        if (!file_exists($api_file_path)) {
+            return array(
+                'success' => false,
+                'response' => null,
+                'error' => sprintf(__('Fichier API introuvable pour le fournisseur: %s', 'ai-connector'), $active_provider),
+            );
+        }
+        require_once $api_file_path;
 
-        // Mapper le nom du fournisseur vers la classe API correspondante
-        $api_class_map = [
+        $api_class_map = array(
             'openai' => 'AI_OpenAI_API',
             'anthropic' => 'AI_Anthropic_API',
             'mistral' => 'AI_Mistral_API',
             'google' => 'AI_Gemini_API',
             'gemini' => 'AI_Gemini_API',
-            'grok' => 'AI_Grok_API'
-        ];
+            'grok' => 'AI_Grok_API',
+        );
 
         $api_class = $api_class_map[$active_provider];
 
-        ai_agent_log('Délégation de la requête à la classe: ' . $api_class, 'debug');
+        ai_connector_log('Delegation de la requete a la classe: ' . $api_class, 'debug');
 
-        // Appeler la méthode send_request de la classe API correspondante
         return $api_class::send_request($prompt, $active_model, $api_key);
     }
+}
+
+if (!class_exists('AI_Request_Handler', false)) {
+    class_alias('AI_Connector_Request_Handler', 'AI_Request_Handler');
 }
