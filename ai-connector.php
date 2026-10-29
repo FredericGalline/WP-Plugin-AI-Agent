@@ -4,6 +4,7 @@
  * Plugin Name: AI Connector
  * Description: Connecteur IA transverse pour WordPress avec API publique, gestion des fournisseurs et outils de diagnostic.
  * Version: 1.2.0
+ * Requires PHP: 8.2
  * Author: Frederic Galline
  * Author URI: https://example.com
  * License: GPL2
